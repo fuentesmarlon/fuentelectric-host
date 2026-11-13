@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía del administrador · Fuentelectric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="hoja">
+
+<header class="portada">
+  <div class="logo"><img src="img/fte-logo.png" alt="FTE · Fuentelectric"></div>
+  <div class="tipo-doc">Guía de usuario · Administrador</div>
+  <h1>Cómo programar y controlar los turnos</h1>
+  <p class="resumen">Paso a paso para asignar turnos, mantener al día trabajadores, áreas y vehículos, y sacar los reportes de la programación.</p>
+  <div class="barra"></div>
+</header>
+
+<main class="contenido">
+
+<table class="ficha">
+  <tr><th>Código del documento</th><td>FTE-TUR-GU-03</td></tr>
+  <tr><th>Versión</th><td>1.2 · 10 de noviembre de 2026</td></tr>
+  <tr><th>Para</th><td>Personal con cuenta de <strong>administrador</strong> o <strong>superadministrador</strong></td></tr>
+  <tr><th>Elaboró / aprobó</th><td>Pablo García · Marlon Fuentes</td></tr>
+</table>
+
+<nav class="indice">
+  <strong>Contenido</strong>
+  <ol>
+    <li><a href="#antes">Antes de empezar</a></li>
+    <li><a href="#acceso">Entrar y salir</a></li>
+    <li><a href="#panel">Conocer el panel</a></li>
+    <li><a href="#asignar">Asignar un turno</a></li>
+    <li><a href="#consultar">Consultar y corregir turnos</a></li>
+    <li><a href="#masiva">Carga masiva con Excel</a></li>
+    <li><a href="#trabajadores">Trabajadores</a></li>
+    <li><a href="#areas-vehiculos">Áreas y vehículos</a></li>
+    <li><a href="#reportes">Historial y reportes</a></li>
+    <li><a href="#cuentas">Cuentas de acceso</a></li>
+    <li><a href="#mensajes">Mensajes frecuentes</a></li>
+    <li><a href="#preguntas">Preguntas frecuentes</a></li>
+  </ol>
+</nav>
+
+<h2 id="antes"><span class="num">1.</span> Antes de empezar</h2>
+<ul>
+  <li>Necesita una computadora o celular con internet y un navegador actualizado (Chrome, Edge, Firefox o Safari).</li>
+  <li>Entre siempre desde <code>https://fuentelectric-asistence-table.vercel.app</code>.</li>
+  <li>Su cuenta la crea un superadministrador desde <em>Cuentas de acceso</em>. Si no puede entrar, comuníquese con él.</li>
+</ul>
+<p><strong>Cómo leer esta guía:</strong> lo que aparece así, <span class="ui">Registrar Asistencia</span>, es el texto exacto de un botón o campo. Los íconos se muestran como <span class="ico">✎</span> (editar), <span class="ico rojo">🗑</span> (eliminar) y <span class="ico">↺</span> (reactivar).</p>
+
+<h2 id="acceso"><span class="num">2.</span> Entrar y salir</h2>
+<div class="tarea">
+<h3>Iniciar sesión</h3>
+<ol class="pasos">
+  <li>Escriba su correo de trabajo y pulse <span class="ui">Continuar</span>.</li>
+  <li>Escriba su contraseña (el ojo <span class="ico">👁</span> la muestra u oculta) y pulse <span class="ui">Iniciar sesión</span>.<br>
+      <strong>¿Prefiere no usar la contraseña?</strong> Pulse <span class="ui">Recibir un código por correo</span>, escriba el código de 6 dígitos que le llega y pulse <span class="ui">Verificar e ingresar</span>. Con <span class="ui">Usar mi contraseña</span> vuelve al paso anterior.</li>
+  <li>Se abre el <strong>Dashboard</strong>.</li>
+</ol>
+</div>
+<div class="tarea">
+<h3>Primer ingreso o contraseña restablecida</h3>
+<p>Si su cuenta es nueva o el superadministrador restableció su contraseña, después de iniciar sesión aparece la pantalla <strong>Crea tu contraseña</strong>:</p>
+<ol class="pasos">
+  <li>Entre con la contraseña que le dieron o, si no la tiene, con <span class="ui">Recibir un código por correo</span>.</li>
+  <li>Escriba su <span class="ui">Contraseña nueva</span> (mínimo 8 caracteres) y repítala en <span class="ui">Repite la contraseña</span>.</li>
+  <li>Pulse <span class="ui">Guardar y entrar al panel</span>. Desde ese momento entra con su contraseña nueva.</li>
+</ol>
+<p>Hasta que la cambie, no podrá usar el panel. Si pulsa <span class="ui">Cerrar sesión</span>, se le volverá a pedir la próxima vez.</p>
+</div>
+<div class="importante"><p>Por seguridad, la sesión de administrador se cierra sola a <strong>1 hora</strong> de haber entrado. Si el sistema le pide entrar de nuevo, guarde lo que estaba haciendo después de volver a iniciar sesión.</p></div>
+<p><strong>Cerrar sesión:</strong> en el menú de la izquierda, pulse <span class="ui">Cerrar sesión</span>; o pulse su nombre arriba a la derecha y luego <span class="ui">Cerrar sesión</span>. Hágalo siempre en computadoras compartidas.</p>
+
+<h2 id="panel" class="salto"><span class="num">3.</span> Conocer el panel</h2>
+<p>El menú de la izquierda lleva a cada sección. En celular se abre con el botón <span class="ico">☰</span> de arriba a la izquierda. <span class="ui">Contraer menú</span> lo deja más angosto para ganar espacio.</p>
+<table>
+  <thead><tr><th style="width:30%">Sección</th><th>Para qué sirve</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Dashboard</strong></td><td>Ver los turnos del día y el resumen general.</td></tr>
+    <tr><td><strong>Asignación de turnos</strong></td><td>Registrar, editar y eliminar turnos.</td></tr>
+    <tr><td><strong>Trabajadores</strong></td><td>Dar de alta y mantener al personal.</td></tr>
+    <tr><td><strong>Áreas operativas</strong></td><td>Las zonas de trabajo.</td></tr>
+    <tr><td><strong>Vehículos</strong></td><td>Las unidades y su estado.</td></tr>
+    <tr><td><strong>Historial y reportes</strong></td><td>Ver quién hizo cada cambio y exportar a PDF o Excel.</td></tr>
+  </tbody>
+</table>
+<h3>El Dashboard</h3>
+<ul>
+  <li>Arriba, cuatro tarjetas: trabajadores, vehículos y áreas activos, y turnos registrados hoy.</li>
+  <li>Debajo, la lista de turnos de <strong>hoy</strong>, ordenada por jornada, hora, unidad y nombre.</li>
+  <li>Cambie el periodo con <span class="ui">Mañana</span>, <span class="ui">Esta semana</span> o <span class="ui">Este mes</span>. Para otra fecha, elíjala en <span class="ui">Ver un día</span> y pulse <span class="ui">Ver</span>.</li>
+  <li>La campana <span class="ico">🔔</span> muestra los cambios que usted ha guardado durante la sesión.</li>
+</ul>
+
+<h2 id="asignar" class="salto"><span class="num">4.</span> Asignar un turno</h2>
+<div class="tarea">
+<h3>Registrar un turno nuevo</h3>
+<p class="objetivo">Objetivo: que un trabajador quede programado en una unidad, área y horario.</p>
+<ol class="pasos">
+  <li>Abra <strong>Asignación de turnos</strong>. El formulario <span class="ui">Nuevo turno</span> está arriba.</li>
+  <li>En <span class="ui">Trabajador</span>, escriba parte del nombre o del puesto y elija a la persona de la lista.</li>
+  <li>Elija la <span class="ui">Fecha</span>. Si registra un día que ya pasó, el turno queda <span class="etq neutra">Cerrado</span> de inmediato y ya no se podrá corregir.</li>
+  <li>Elija el <span class="ui">Tipo de Turno</span> (<span class="ui">Diurno</span> o <span class="ui">Nocturno</span>) y luego el <span class="ui">Horario Base</span>. Los horarios que chocan con otro turno de la persona o de la unidad ese día aparecen deshabilitados, con el motivo.</li>
+  <li>Elija el <span class="ui">Área Operativa</span> y el <span class="ui">Vehículo Asignado</span>. Junto a cada unidad verá cuántas personas lleva ya en esa jornada (por ejemplo, <em>2/3 en turno</em>).</li>
+  <li>Si hace falta, marque <span class="ui">¿Es turno extra?</span> o <span class="ui">Cupo extra</span> (ver abajo) y escriba un comentario.</li>
+  <li>Pulse <span class="ui">Registrar Asistencia</span>. Aparece un aviso verde y el formulario se vacía para el siguiente turno.</li>
+</ol>
+</div>
+<div class="consejo"><p>En la vista de calendario, el botón <span class="ico">+</span> de un día abre el formulario con esa fecha ya elegida.</p></div>
+
+<h3>Cuándo usar las opciones especiales</h3>
+<table>
+  <thead><tr><th style="width:28%">Opción</th><th>Úsela cuando…</th></tr></thead>
+  <tbody>
+    <tr><td><span class="ui">¿Es turno extra?</span></td><td>El turno es adicional al habitual de la persona. Es obligatorio para que alguien trabaje <strong>diurno y nocturno el mismo día</strong> (doble jornada); además los horarios no deben cruzarse.</td></tr>
+    <tr><td><span class="ui">Cupo extra</span></td><td>La unidad ya está llena en esa jornada (normalmente 3 personas) y de verdad necesita una persona más.</td></tr>
+  </tbody>
+</table>
+
+<h3>Quién aparece en la lista de trabajadores</h3>
+<p>Solo el personal en estado <span class="etq ok">Personal (Activo)</span>. No aparecen las personas en vacaciones, incapacidad o dadas de baja, ni las de puestos de gerencia y administración (Gerente General, Administrador, Administrativo Jr, Gerente Administrativo y Supervisor SISO). Del mismo modo, solo aparecen unidades <span class="etq ok">Disponible</span> y áreas activas.</p>
+
+<h2 id="consultar" class="salto"><span class="num">5.</span> Consultar y corregir turnos</h2>
+<p>Debajo del formulario están los turnos registrados, en <span class="ui">Vista Calendario</span> o <span class="ui">Vista Tabla</span>.</p>
+<ul>
+  <li><strong>Calendario:</strong> cambie de mes con las flechas. Cada día muestra sus turnos; si hay muchos, pulse el resumen del día para verlos todos.</li>
+  <li><strong>Tabla:</strong> lista de 50 turnos por página, con los botones de editar y eliminar.</li>
+  <li><span class="ui">Filtros avanzados</span>: busque por fechas, trabajador, vehículo, área, jornada, horario o turno extra. Los filtros activos se ven como etiquetas que se pueden quitar una por una.</li>
+</ul>
+<div class="nota"><p>La pantalla carga un mes a la vez (o hasta 93 días si filtra por fechas). Para periodos más largos use los reportes de la sección 9.</p></div>
+
+<div class="tarea">
+<h3>Editar un turno</h3>
+<ol class="pasos">
+  <li>Busque el turno en la tabla o el calendario y pulse <span class="ico">✎</span>.</li>
+  <li>Cambie lo necesario. Se aplican las mismas reglas que al registrar.</li>
+  <li>Pulse <span class="ui">Guardar Cambios</span>.</li>
+</ol>
+</div>
+<div class="tarea">
+<h3>Eliminar un turno</h3>
+<ol class="pasos">
+  <li>Pulse <span class="ico rojo">🗑</span> en el turno.</li>
+  <li>Confirme con <span class="ui">Sí, eliminar</span>. La eliminación queda en el historial de auditoría.</li>
+</ol>
+</div>
+<div class="importante"><p>Los turnos de fechas que ya pasaron se ven como <span class="etq neutra">Cerrado</span> y ya no se pueden editar ni eliminar. Revise bien antes de que termine el día.</p></div>
+
+<h2 id="masiva" class="salto"><span class="num">6.</span> Carga masiva con Excel</h2>
+<div class="tarea">
+<h3>Programar muchos turnos a la vez</h3>
+<p class="objetivo">Útil para cargar la programación de una semana o un mes de una sola vez.</p>
+<ol class="pasos">
+  <li>En <strong>Asignación de turnos</strong>, pulse <span class="ui">Carga Masiva (Excel)</span>.</li>
+  <li>Pulse <span class="ui">Descargar Plantilla (.xlsx)</span>. Descárguela cada vez: trae en una segunda hoja los trabajadores, unidades y áreas disponibles <em>hoy</em>.</li>
+  <li>Llene una fila por turno, copiando los nombres exactos de la hoja de catálogos.</li>
+  <li>Vuelva al sistema, elija el archivo y cómo tratar los duplicados (ver tabla).</li>
+  <li>Pulse <span class="ui">Importar Turnos</span>. Al terminar verá cuántos turnos se crearon, actualizaron u omitieron, y la lista de filas con error y su motivo.</li>
+  <li>Corrija en el Excel solo las filas con error y súbalo de nuevo.</li>
+</ol>
+</div>
+<table>
+  <thead><tr><th style="width:24%">Columna</th><th>Qué escribir</th></tr></thead>
+  <tbody>
+    <tr><td>FECHA</td><td>AAAA-MM-DD (ej. 2026-11-20). También se acepta DD/MM/AAAA.</td></tr>
+    <tr><td>TRABAJADOR</td><td>Nombre completo tal como está en el sistema.</td></tr>
+    <tr><td>VEHICULO</td><td>Código de la unidad (ej. A-111).</td></tr>
+    <tr><td>AREA</td><td>Nombre del área.</td></tr>
+    <tr><td>TIPO_TURNO</td><td>DIURNO o NOCTURNO.</td></tr>
+    <tr><td>HORARIO</td><td>Por ejemplo 07:00 - 19:00 o 07-19.</td></tr>
+    <tr><td>TURNO_EXTRA</td><td>SI o NO.</td></tr>
+    <tr><td>COMENTARIO</td><td>Opcional.</td></tr>
+  </tbody>
+</table>
+<table>
+  <thead><tr><th style="width:34%">Opción de duplicados</th><th>Qué hace si la persona ya tiene turno ese día y jornada</th></tr></thead>
+  <tbody>
+    <tr><td><span class="ui">Omitir duplicados (Recomendado)</span></td><td>Deja el turno existente y salta la fila.</td></tr>
+    <tr><td><span class="ui">Sobrescribir existentes</span></td><td>Reemplaza el turno existente con lo del archivo.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="trabajadores" class="salto"><span class="num">7.</span> Trabajadores</h2>
+<div class="tarea">
+<h3>Dar de alta a un trabajador</h3>
+<ol class="pasos">
+  <li>Abra <strong>Trabajadores</strong>. En <span class="ui">Nuevo trabajador</span> escriba el <span class="ui">Nombre completo</span> y el <span class="ui">Puesto</span>.</li>
+  <li>Elija su <span class="ui">Horario establecido</span> y, si tiene una, su <span class="ui">Unidad asignada</span>.</li>
+  <li>Pulse <span class="ui">Crear trabajador</span>. Entra en estado <span class="etq ok">Personal (Activo)</span>.</li>
+</ol>
+</div>
+<div class="nota"><p>Escriba el puesto siempre igual (por ejemplo, “Supervisor SISO”). El sistema usa el puesto para saber quién no recibe turnos.</p></div>
+<div class="tarea">
+<h3>Registrar vacaciones o incapacidad</h3>
+<ol class="pasos">
+  <li>Busque a la persona y pulse <span class="ico">✎</span>.</li>
+  <li>En <span class="ui">Estado del trabajador</span> elija <span class="ui">Vacaciones</span> o <span class="ui">Incapacidad</span> y pulse <span class="ui">Guardar cambios</span>.</li>
+  <li>Al regresar, vuelva a ponerla en <span class="ui">Personal (Activo)</span>.</li>
+</ol>
+</div>
+<div class="tarea">
+<h3>Dar de baja y reactivar</h3>
+<ol class="pasos">
+  <li>Pulse <span class="ico rojo">🗑</span> y confirme con <span class="ui">Sí, pasar a inactivo</span>. La persona deja de aparecer al asignar, pero sus turnos anteriores se conservan.</li>
+  <li>Para reincorporarla, pulse <span class="ico">↺</span> (<span class="ui">Reactivar</span>) en su fila. Si tenía unidad fija, asígnela de nuevo con <span class="ico">✎</span>.</li>
+</ol>
+</div>
+
+<h2 id="areas-vehiculos" class="salto"><span class="num">8.</span> Áreas y vehículos</h2>
+<div class="tarea">
+<h3>Áreas operativas</h3>
+<ol class="pasos">
+  <li>Para crear: escriba el <span class="ui">Nombre del Área</span> y pulse <span class="ui">Guardar área</span>.</li>
+  <li>Para renombrar o cambiar su estado: <span class="ico">✎</span> → <span class="ui">Guardar cambios</span>.</li>
+  <li>Para desactivar: <span class="ico rojo">🗑</span> → <span class="ui">Sí, pasar a inactivo</span>. Para volver a usarla: <span class="ico">↺</span>.</li>
+</ol>
+</div>
+<div class="tarea">
+<h3>Vehículos</h3>
+<ol class="pasos">
+  <li>Para crear: <span class="ui">Código de Unidad</span>, <span class="ui">Tipo de Vehículo</span> (Carro o Camión) y <span class="ui">Capacidad (Personas)</span> → <span class="ui">Guardar vehículo</span>. Entra como <span class="etq ok">Disponible</span>.</li>
+  <li>Si entra al taller o a inspección, o se vende: <span class="ico">✎</span> → <span class="ui">Estado de la unidad</span> → <span class="ui">Guardar cambios</span>. Mientras no esté <em>Disponible</em> no aparece al asignar.</li>
+  <li>Para retirarla definitivamente: <span class="ico rojo">🗑</span> → <span class="ui">Sí, dar de baja</span> (queda como <span class="etq error">Dado de Baja / Chatarra</span>). Para devolverla a la flota: <span class="ico">↺</span>.</li>
+</ol>
+</div>
+
+<h2 id="reportes" class="salto"><span class="num">9.</span> Historial y reportes</h2>
+<p><strong>Historial y reportes</strong> muestra el <span class="ui">Registro de auditoría</span>: cada creación, edición o eliminación de turno con la fecha, la hora y quién la hizo.</p>
+<div class="tarea">
+<h3>Exportar un reporte</h3>
+<ol class="pasos">
+  <li>Elija el tipo de reporte: <span class="ui">Programa de Turnos</span> (ya viene seleccionado), <span class="ui">Reporte Completo</span> o <span class="ui">Solo Auditoría</span>.</li>
+  <li>Elija el periodo: <span class="ui">Último mes</span>, <span class="ui">Últimos 7 días</span>, <span class="ui">Todo el historial</span> o un rango con las fechas desde y hasta.</li>
+  <li>Pulse <span class="ui">Exportar PDF Oficial</span> o <span class="ui">Exportar Excel (.xlsx)</span>. El archivo se descarga con la fecha y hora en el nombre.</li>
+</ol>
+</div>
+<p>En el <strong>Programa de Turnos</strong> cada celda tiene un código: <strong>12D</strong> diurno, <strong>12N</strong> nocturno, <strong>12D+ / 12N+</strong> turno extra, <strong>24H</strong> doble jornada y <strong>D</strong> descanso. En Asignación de turnos, <span class="ui">Exportar Excel</span> descarga el programa del periodo que tiene en pantalla.</p>
+
+<h2 id="cuentas" class="salto"><span class="num">10.</span> Cuentas de acceso (superadministrador)</h2>
+<p>Esta sección solo aparece en el menú de los <strong>superadministradores</strong>. Sirve para decidir quién puede iniciar sesión y con qué permisos.</p>
+<table>
+  <thead><tr><th style="width:26%">Rol</th><th>Qué puede hacer</th></tr></thead>
+  <tbody>
+    <tr><td><span class="etq neutra">Trabajador</span></td><td>Solo consulta los turnos. Entra con un código por correo.</td></tr>
+    <tr><td><span class="etq info">Administrador</span></td><td>Todo lo de esta guía. Entra con contraseña o con código.</td></tr>
+    <tr><td><span class="etq aviso">Superadministrador</span></td><td>Todo lo del administrador y además administra las cuentas.</td></tr>
+  </tbody>
+</table>
+<div class="tarea">
+<h3>Crear una cuenta</h3>
+<ol class="pasos">
+  <li>Abra <strong>Cuentas de acceso</strong>. En <span class="ui">Nueva cuenta</span> escriba el <span class="ui">Nombre completo</span> y el <span class="ui">Correo electrónico</span>.</li>
+  <li>Elija el <span class="ui">Rol</span>. Si es administrador o superadministrador, escriba una <span class="ui">Contraseña inicial</span> de al menos 8 caracteres y compártala con la persona por un medio seguro. Deje marcada <span class="ui">Pedir cambio de contraseña al iniciar sesión</span> para que en su primer ingreso elija una que solo ella conozca.</li>
+  <li>Pulse <span class="ui">Crear cuenta</span>. La persona ya puede entrar.</li>
+</ol>
+</div>
+<div class="tarea">
+<h3>Editar o eliminar una cuenta</h3>
+<ol class="pasos">
+  <li>Con <span class="ico">✎</span> cambia el nombre, el correo, el rol o la contraseña, y pulse <span class="ui">Guardar cambios</span>. Para dar acceso de administrador a un trabajador hay que asignarle contraseña.</li>
+  <li><strong>Restablecer una contraseña olvidada:</strong> con <span class="ico">✎</span> marque <span class="ui">Pedir cambio de contraseña al iniciar sesión</span> y pulse <span class="ui">Guardar cambios</span>. Avise a la persona: entra con <span class="ui">Recibir un código por correo</span> y elige su contraseña nueva. En la lista, su cuenta muestra <span class="etq neutra">Cambio de contraseña pendiente</span> hasta que lo haga.</li>
+  <li>Con <span class="ico rojo">🗑</span> y <span class="ui">Sí, eliminar cuenta</span> la persona deja de poder entrar y se cierran sus sesiones. Sus turnos y su historial se conservan.</li>
+</ol>
+</div>
+<div class="nota"><p>Una <strong>cuenta</strong> sirve para iniciar sesión; es distinta del <strong>trabajador</strong> al que se le asignan turnos (sección 7). Por seguridad, nadie puede eliminarse ni cambiarse el rol a sí mismo, y siempre debe quedar al menos un superadministrador.</p></div>
+
+<h2 id="mensajes" class="salto"><span class="num">11.</span> Mensajes frecuentes</h2>
+<table>
+  <thead><tr><th style="width:42%">Si el sistema dice…</th><th>Qué significa y qué hacer</th></tr></thead>
+  <tbody>
+    <tr><td>“… ya tiene un turno diurno/nocturno registrado en esa fecha.”</td><td>La persona ya tiene un turno de esa jornada ese día. Edite el existente en lugar de crear otro.</td></tr>
+    <tr><td>“Para cubrir doble jornada, uno de los dos turnos debe marcarse como ¿Es turno extra?”</td><td>Marque la casilla en este turno o en el otro.</td></tr>
+    <tr><td>“El vehículo … ya alcanzó su capacidad máxima…”</td><td>La unidad está llena en esa jornada. Use otra unidad o marque <span class="ui">Cupo extra</span>.</td></tr>
+    <tr><td>Aviso de que se traslapan las horas de entrega de la unidad</td><td>El horario diurno de esa unidad termina después de que empieza el nocturno. Elija otro horario u otra unidad.</td></tr>
+    <tr><td>“… porque su estado actual es …”</td><td>La persona, unidad o área no está activa. Cambie su estado si corresponde.</td></tr>
+    <tr><td>“… su puesto (…) no se asigna a turnos operativos.”</td><td>Es personal de gerencia o administración. Es intencional.</td></tr>
+    <tr><td>“No se puede modificar esta asistencia porque la fecha del turno ya pasó.”</td><td>El turno está cerrado.</td></tr>
+    <tr><td>Le pide iniciar sesión de nuevo</td><td>Pasó la hora de la sesión. Entre otra vez.</td></tr>
+    <tr><td>“Las dos contraseñas no coinciden.”</td><td>Al crear su contraseña, las dos casillas deben ser iguales. Escríbalas otra vez.</td></tr>
+    <tr><td>“La contraseña nueva debe ser distinta de la que usabas.”</td><td>Elija una contraseña diferente a la que le dieron.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="preguntas"><span class="num">12.</span> Preguntas frecuentes</h2>
+<h4>¿Puedo ver turnos de días anteriores?</h4>
+<p>Sí: en el Dashboard con <span class="ui">Ver un día</span>, en el calendario retrocediendo de mes, o con un reporte de Historial.</p>
+<h4>Eliminé a alguien por error. ¿Se perdió su información?</h4>
+<p>No. Nada se borra de verdad: pulse <span class="ico">↺</span> en su fila y vuelve a estar activo con todo su historial.</p>
+<h4>¿Por qué alguien no aparece al asignar turnos?</h4>
+<p>Revise en Trabajadores que esté en <span class="etq ok">Personal (Activo)</span> y cómo está escrito su puesto.</p>
+<h4>Olvidé mi contraseña. ¿Qué hago?</h4>
+<p>Entre con <span class="ui">Recibir un código por correo</span>. Si necesita una contraseña nueva, pida al superadministrador que la restablezca: la próxima vez que entre podrá elegirla.</p>
+<h4>¿Los trabajadores pueden cambiar algo?</h4>
+<p>No. Su cuenta es solo de consulta.</p>
+<h4>¿A quién reporto un problema?</h4>
+<p>Al superadministrador o al área técnica responsable del sistema. Indique qué estaba haciendo, el mensaje que apareció y, si puede, una captura de pantalla.</p>
+
+<div class="pie-doc"><span>FTE-TUR-GU-03 · Versión 1.2</span><span>Fuentelectric · Uso interno</span></div>
+</main>
+</div>
+</body>
+</html>

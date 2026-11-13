@@ -1,0 +1,196 @@
+// Estructura de la base de datos (PostgreSQL en Supabase).
+//
+// Para cambiarla:
+//   1. Edita este archivo.
+//   2. Crea la migración:  pnpm prisma migrate dev --create-only --name descripcion_corta
+//      (hazlo contra una base de pruebas, nunca contra producción).
+//   3. Revisa el .sql generado en prisma/migrations y pruébalo.
+//   4. Aplícalo en producción con  pnpm db:migrate  ANTES de publicar el código que lo usa.
+//
+// Ningún registro se borra de verdad desde la app: trabajadores, áreas y vehículos se
+// "desactivan" cambiando su estado, para no perder el historial de turnos.
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// TRABAJADOR: solo consulta turnos. ADMIN: gestiona turnos y catálogos.
+// SUPERADMIN: todo lo de ADMIN y además crea, edita y elimina cuentas (src/lib/roles.ts).
+enum RolUsuario {
+  ADMIN
+  TRABAJADOR
+  SUPERADMIN
+}
+
+enum TipoVehiculo {
+  CARRO
+  CAMION
+}
+
+// El número indica las horas: DIURNO_07_19 = de 07:00 a 19:00.
+// Las etiquetas y las reglas de traslape están en src/lib/horarios-turno.ts.
+enum HorarioBase {
+  DIURNO_06_18
+  DIURNO_07_19
+  DIURNO_08_20
+  DIURNO_09_21
+  NOCTURNO_19_07
+  NOCTURNO_20_08
+  NOCTURNO_21_09
+}
+
+// Hoy todos los turnos se guardan como TRABAJO_12; los demás valores quedaron por compatibilidad.
+enum EstadoDia {
+  TRABAJO_12
+  DESCANSO_D
+  INCAPACIDAD
+  VACACIONES
+}
+
+enum TipoTurno {
+  DIURNO
+  NOCTURNO
+}
+
+enum EstadoTrabajador {
+  Activo
+  Incapacidad
+  Vacaciones
+  Inactivo
+}
+
+// Si agregas o quitas un estado, actualiza también src/lib/estados-vehiculo.ts
+// (TypeScript avisa con un error si no coinciden).
+enum EstadoVehiculo {
+  DISPONIBLE
+  EN_TALLER
+  EN_INSPECCION
+  VENDIDO
+  DADO_DE_BAJA
+}
+
+enum EstadoArea {
+  Activo
+  Inactivo
+}
+
+enum AccionSnapshot {
+  CREACION
+  EDICION
+  ELIMINACION
+}
+
+// Cuentas que pueden iniciar sesión. El id es el mismo de Supabase Auth. Se crean desde
+// el panel (Cuentas de acceso, solo superadministrador), que crea las dos cosas a la vez.
+// No es lo mismo que Trabajador: un Trabajador no necesita cuenta para recibir turnos.
+model Usuario {
+  id     String     @id
+  nombre String
+  email  String     @unique
+  rol    RolUsuario @default(TRABAJADOR)
+  // true = al iniciar sesión debe elegir una contraseña nueva antes de usar el panel.
+  // Lo activa el superadministrador al crear la cuenta o al restablecer la contraseña.
+  debeCambiarContrasena Boolean @default(false)
+}
+
+// Personal al que se le asignan turnos. "puesto" es texto libre; los puestos que nunca se
+// asignan a turnos (gerencia, administración…) están en src/lib/puestos-no-asignables.ts.
+// vehiculoId es su unidad fija habitual (informativa: en cada turno la unidad se elige aparte).
+model Trabajador {
+  id                 String           @id @default(cuid())
+  nombre             String
+  puesto             String?
+  disponibilidad     EstadoTrabajador @default(Activo)
+  horarioEstablecido HorarioBase
+
+  vehiculoId String?
+  vehiculo   Vehiculo? @relation(fields: [vehiculoId], references: [id], onDelete: SetNull)
+
+  turnosAsignados TurnoDiario[] @relation("TurnosAsignados")
+}
+
+model Area {
+  id     String        @id @default(cuid())
+  nombre String        @unique
+  estado EstadoArea    @default(Activo)
+  turnos TurnoDiario[]
+}
+
+model Vehiculo {
+  id         String         @id @default(cuid())
+  codigo     String         @unique
+  tipo       TipoVehiculo
+  noPersonas Int            @default(3)
+  estado     EstadoVehiculo @default(DISPONIBLE)
+  turnos     TurnoDiario[]
+
+  trabajadoresAsignados Trabajador[]
+}
+
+// Un turno de un trabajador en un día.
+// - fecha: se guarda a las 12:00 UTC del día; para buscar usa rangoFechaTurno() (lib/form-validation.ts).
+// - asignadoNombre, areaNombre y vehiculoCodigo copian el nombre al guardar: si después se
+//   desactiva o renombra algo, el turno sigue mostrando lo que era ese día.
+// - Un trabajador no puede tener dos turnos de la misma jornada el mismo día (@@unique de abajo).
+model TurnoDiario {
+  id String @id @default(cuid())
+
+  asignadoId String?
+  asignado   Trabajador? @relation("TurnosAsignados", fields: [asignadoId], references: [id], onDelete: SetNull)
+
+  asignadoNombre String?
+
+  registradoPor String
+
+  fecha  DateTime
+  estado EstadoDia
+
+  tipoTurno TipoTurno
+  horario   HorarioBase
+
+  areaId     String?
+  area       Area?   @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  areaNombre String?
+
+  esTurnoExtra Boolean @default(false)
+  esCupoExtra  Boolean @default(false)
+
+  comentario     String?
+  vehiculoId     String?
+  vehiculo       Vehiculo? @relation(fields: [vehiculoId], references: [id], onDelete: SetNull)
+  vehiculoCodigo String?
+
+  @@unique([asignadoId, fecha, tipoTurno])
+  @@index([fecha])
+  @@index([vehiculoId, fecha])
+  @@index([asignadoId])
+}
+
+// Historial de auditoría: una fila cada vez que alguien crea, edita o elimina un turno.
+// Es una copia en texto (no tiene relaciones), así se conserva aunque el turno se borre.
+model SnapshotTurno {
+  id            String   @id @default(cuid())
+  fechaGuardado DateTime @default(now())
+
+  nombreTrabajador String
+  areaTrabajo      String
+  vehiculoPlaca    String
+
+  // Datos del turno
+  tipoTurno    String // "DIURNO" o "NOCTURNO"
+  hora         String
+  esTurnoExtra Boolean @default(false)
+  comentario   String?
+
+  // Nombre del admin que hizo el cambio
+  usuarioResponsable String
+
+  // Qué acción originó este registro de auditoría
+  accion AccionSnapshot @default(CREACION)
+
+  @@index([fechaGuardado])
+}

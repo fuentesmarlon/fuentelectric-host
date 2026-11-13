@@ -1,0 +1,198 @@
+/* Estilo común de los manuales. Misma paleta que el panel del sistema
+   (src/app/tableros/dashboard.css). Pensado para leerse en pantalla y para
+   imprimirse en PDF tamaño A4 (Ctrl+P → Guardar como PDF). */
+
+:root {
+  --azul-noche: #0B213D;
+  --azul: #102D50;
+  --azul-claro: #EAF2FA;
+  --amarillo: #F2E500;
+  --fondo: #F5F7FA;
+  --texto: #1F2A37;
+  --texto-suave: #5B6673;
+  --borde: #D9E0E7;
+  --tabla-cabecera: #F0F4F8;
+  --exito: #2E7D32;   --exito-fondo: #EDF7EE;
+  --aviso: #9A5700;   --aviso-fondo: #FFF4E5;
+  --info: #1976D2;    --info-fondo: #EAF3FC;
+  --error: #C62828;   --error-fondo: #FDEEEF;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.hoja { max-width: 860px; margin: 32px auto; padding: 0 16px; }
+.contenido { background: #fff; border: 1px solid var(--borde); border-radius: 12px; padding: 48px 56px; }
+
+/* ── Portada ── */
+.portada {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  background: var(--azul-noche);
+  color: #fff;
+  padding: 56px 56px 48px;
+}
+.portada::after {
+  content: "";
+  position: absolute; right: -80px; top: -80px;
+  width: 280px; height: 280px; border-radius: 50%;
+  border: 36px solid rgba(242, 229, 0, .12);
+}
+.portada .logo { background: #fff; border-radius: 10px; padding: 10px 16px; display: inline-block; }
+.portada .logo img { height: 52px; display: block; }
+.portada .tipo-doc { margin-top: 40px; color: var(--amarillo); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.portada h1 { margin: 8px 0 10px; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
+.portada .resumen { max-width: 560px; color: #E2EDF7; font-size: 15px; margin: 0; }
+.portada .barra { width: 64px; height: 5px; border-radius: 3px; background: var(--amarillo); margin-top: 28px; }
+.portada + .contenido { border-top: 0; border-radius: 0 0 12px 12px; }
+
+/* ── Tipografía ── */
+h2 {
+  margin: 44px 0 14px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--borde);
+  color: var(--azul); font-size: 22px; line-height: 1.3;
+}
+h2 .num { display: inline-block; min-width: 34px; color: var(--azul); }
+h2::after { content: ""; display: block; width: 48px; height: 3px; background: var(--amarillo); margin-top: 6px; margin-bottom: -10px; border-radius: 2px; }
+h3 { margin: 28px 0 8px; color: var(--azul-noche); font-size: 16.5px; }
+h4 { margin: 20px 0 6px; font-size: 14.5px; color: var(--texto); }
+p { margin: 0 0 12px; }
+a { color: var(--info); }
+ul, ol { margin: 0 0 14px; padding-left: 22px; }
+li { margin: 3px 0; }
+code, kbd, .ruta {
+  font-family: "Cascadia Code", Consolas, monospace; font-size: 12.5px;
+  background: var(--tabla-cabecera); border: 1px solid var(--borde); border-radius: 4px; padding: 1px 5px;
+}
+pre {
+  margin: 0 0 16px; padding: 14px 16px; overflow-x: auto;
+  background: var(--azul-noche); color: #E2EDF7; border-radius: 8px;
+  font-family: "Cascadia Code", Consolas, monospace; font-size: 12.5px; line-height: 1.55;
+}
+pre code { background: none; border: 0; padding: 0; color: inherit; }
+.ui { font-weight: 650; color: var(--azul); }            /* nombre de un botón o campo en pantalla */
+.ui::before { content: "«"; color: var(--texto-suave); font-weight: 400; }
+.ui::after { content: "»"; color: var(--texto-suave); font-weight: 400; }
+
+/* Ícono de un botón del sistema, dibujado como en pantalla */
+.ico { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; vertical-align: -5px; border: 1px solid var(--borde); border-radius: 5px; background: #fff; color: var(--azul); font-size: 13px; line-height: 1; }
+.ico.rojo { color: var(--error); }
+
+/* Tareas de la guía: una tarjeta por tarea con su objetivo */
+.tarea { border: 1px solid var(--borde); border-left: 4px solid var(--azul); border-radius: 8px; padding: 14px 18px 6px; margin: 14px 0 18px; }
+.tarea > h3 { margin-top: 0; }
+.tarea .objetivo { color: var(--texto-suave); font-size: 13px; margin-top: -4px; }
+
+/* ── Bloques de control del documento ── */
+.ficha { width: 100%; border-collapse: collapse; margin: 0 0 8px; font-size: 13px; }
+.ficha th { width: 34%; text-align: left; background: var(--tabla-cabecera); color: #33465A; }
+.ficha th, .ficha td { border: 1px solid var(--borde); padding: 7px 12px; }
+
+table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 13px; }
+thead th { background: var(--azul); color: #fff; text-align: left; font-weight: 600; }
+th, td { border: 1px solid var(--borde); padding: 7px 10px; vertical-align: top; }
+tbody tr:nth-child(even) td { background: #FAFCFE; }
+
+.indice { background: var(--azul-claro); border-radius: 10px; padding: 18px 24px; margin: 24px 0 8px; }
+.indice strong { color: var(--azul); }
+.indice ol { columns: 2; column-gap: 32px; margin: 8px 0 0; }
+.indice a { color: var(--azul-noche); text-decoration: none; }
+
+/* ── Avisos ── */
+.nota, .importante, .consejo, .peligro {
+  margin: 16px 0; padding: 12px 16px 12px 16px;
+  border-radius: 8px; border-left: 4px solid; font-size: 13.5px;
+}
+.nota { background: var(--info-fondo); border-color: var(--info); }
+.importante { background: var(--aviso-fondo); border-color: #ED8B00; }
+.consejo { background: var(--exito-fondo); border-color: var(--exito); }
+.peligro { background: var(--error-fondo); border-color: var(--error); }
+.nota::before, .importante::before, .consejo::before, .peligro::before {
+  display: block; font-weight: 700; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px;
+}
+.nota::before { content: "Nota"; color: var(--info); }
+.importante::before { content: "Importante"; color: var(--aviso); }
+.consejo::before { content: "Consejo"; color: var(--exito); }
+.peligro::before { content: "Precaución"; color: var(--error); }
+.nota p:last-child, .importante p:last-child, .consejo p:last-child, .peligro p:last-child { margin: 0; }
+
+/* ── Pasos numerados ── */
+ol.pasos { list-style: none; counter-reset: paso; padding-left: 0; }
+ol.pasos > li { counter-increment: paso; position: relative; padding: 2px 0 10px 44px; margin: 0; }
+ol.pasos > li::before {
+  content: counter(paso);
+  position: absolute; left: 0; top: 0;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--azul); color: var(--amarillo);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+}
+ol.pasos > li:not(:last-child)::after {
+  content: ""; position: absolute; left: 13.5px; top: 30px; bottom: 0; width: 1px; background: var(--borde);
+}
+
+/* ── Etiquetas de estado (iguales a las del sistema) ── */
+.etq { display: inline-block; border: 1px solid; border-radius: 5px; padding: 1px 7px; font-size: 11.5px; font-weight: 600; line-height: 1.5; white-space: nowrap; }
+.etq.ok { background: var(--exito-fondo); color: var(--exito); border-color: #CCE5CE; }
+.etq.aviso { background: var(--aviso-fondo); color: var(--aviso); border-color: #F6D8AE; }
+.etq.info { background: var(--info-fondo); color: var(--info); border-color: #CADFF5; }
+.etq.error { background: var(--error-fondo); color: var(--error); border-color: #F5CDCF; }
+.etq.neutra { background: var(--tabla-cabecera); color: var(--texto-suave); border-color: var(--borde); }
+
+/* ── Tarjetas (resúmenes, módulos) ── */
+.tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0 18px; }
+.tarjeta { border: 1px solid var(--borde); border-radius: 10px; padding: 14px 16px; background: #fff; }
+.tarjeta h4 { margin: 0 0 4px; color: var(--azul); }
+.tarjeta p { margin: 0; font-size: 13px; color: var(--texto-suave); }
+.tarjeta .rol { float: right; }
+
+/* Diagrama simple con cajas */
+.diagrama { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 18px; font-size: 12.5px; }
+.diagrama .caja { border: 1px solid var(--borde); border-radius: 8px; padding: 8px 12px; background: var(--azul-claro); color: var(--azul-noche); font-weight: 600; text-align: center; }
+.diagrama .caja small { display: block; font-weight: 400; color: var(--texto-suave); }
+.diagrama .caja.oscura { background: var(--azul); color: #fff; border-color: var(--azul); }
+.diagrama .caja.oscura small { color: #C9D8E8; }
+.diagrama .flecha { color: var(--texto-suave); font-weight: 700; }
+
+.pie-doc { margin-top: 48px; padding-top: 14px; border-top: 1px solid var(--borde); color: var(--texto-suave); font-size: 12px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .contenido, .portada { padding: 28px 20px; }
+  .portada h1 { font-size: 26px; }
+  .indice ol { columns: 1; }
+}
+
+/* ── Impresión / PDF ── */
+@page {
+  size: A4;
+  margin: 18mm 16mm 18mm;
+  @bottom-left { content: "Fuentelectric · Sistema de turnos"; font: 9px Inter, Arial, sans-serif; color: #5B6673; }
+  @bottom-right { content: "Página " counter(page) " de " counter(pages); font: 9px Inter, Arial, sans-serif; color: #5B6673; }
+}
+/* La portada ocupa la hoja completa, sin márgenes ni pie */
+@page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+@media print {
+  body { background: #fff; font-size: 11.5pt; }
+  .hoja { max-width: none; margin: 0; padding: 0; }
+  .contenido { border: 0; border-radius: 0; padding: 0; }
+  .portada { border-radius: 0; margin: 0; padding: 80mm 24mm 40mm; width: 210mm; height: 297mm; break-after: page; }
+  .portada::after { width: 420px; height: 420px; right: -120px; top: -120px; border-width: 54px; }
+  .portada h1 { font-size: 30pt; }
+  .portada + .contenido { border: 0; }
+  h2 { break-after: avoid; }
+  h2.salto { break-before: page; }
+  h3, h4 { break-after: avoid; }
+  table, pre, .nota, .importante, .consejo, .peligro, .tarjeta, ol.pasos > li { break-inside: avoid; }
+  .indice { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .no-imprimir { display: none !important; }
+}

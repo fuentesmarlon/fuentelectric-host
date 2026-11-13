@@ -1,0 +1,96 @@
+/* Estilos del panel (/tableros). Todo cuelga de .dashboard-theme para no afectar la portada
+   pública ni el login. Los colores de la marca están en las variables de abajo. */
+.dashboard-theme {
+  --background: #F5F7FA;
+  --foreground: #1F2A37;
+  --card: #FFFFFF;
+  --card-foreground: #1F2A37;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2A37;
+  --primary: #102D50;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EAF2FA;
+  --secondary-foreground: #0B213D;
+  --muted: #F0F4F8;
+  --muted-foreground: #5B6673;
+  --accent: #EAF2FA;
+  --accent-foreground: #0B213D;
+  --destructive: #C62828;
+  --border: #D9E0E7;
+  --input: #D9E0E7;
+  --ring: #102D50;
+  --radius: 0.625rem;
+  font-family: var(--font-dashboard-inter), Inter, Arial, sans-serif;
+  color: var(--foreground);
+  color-scheme: light;
+}
+.dashboard-sidebar { background: #0B213D; color: white; }
+.dashboard-tooltip { background: #1F2A37; color: white; }
+.dashboard-nav-link { position: relative; display: flex; align-items: center; min-height: 44px; border-radius: 7px; color: #E2EDF7; font-size: 13px; font-weight: 500; transition: background 150ms, color 150ms; }
+.dashboard-nav-link:hover { background: #ffffff12; color: white; }
+.dashboard-nav-link:focus-visible { outline: 2px solid #F2E500; outline-offset: 2px; }
+/* "Ir al contenido": siempre fijo (nunca dentro del flujo, así no empuja el menú).
+   Fuera de la pantalla hasta que recibe el foco con Tab; entonces baja como etiqueta flotante. */
+.dashboard-skip-link { position: fixed; top: 12px; left: 12px; z-index: 100; padding: 10px 16px; border-radius: 7px; background: #F2E500; color: #0B213D; font-size: 13px; font-weight: 700; line-height: 1.2; text-decoration: none; box-shadow: 0 6px 18px #0b213d40; transform: translateY(calc(-100% - 24px)); transition: transform 150ms ease-out; }
+.dashboard-skip-link:focus, .dashboard-skip-link:focus-visible { transform: translateY(0); outline: 2px solid #0B213D; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .dashboard-skip-link { transition: none; } }
+.dashboard-nav-link[aria-current="page"] { background: #102D50; color: #F2E500; font-weight: 600; }
+.dashboard-nav-link[aria-current="page"]::before { content: ''; position: absolute; left: -8px; top: 5px; bottom: 5px; width: 4px; border-radius: 0 3px 3px 0; background: #F2E500; }
+.dashboard-theme [data-slot="card"] { --card-spacing: 20px; gap: 16px; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 2px 5px #1f2a3703; overflow: visible; }
+.dashboard-theme [data-slot="card-title"] { font-size: 18px; line-height: 1.4; font-weight: 650; }
+.dashboard-theme [data-slot="card-description"] { font-size: 13px; line-height: 1.5; }
+.dashboard-theme .dashboard-stat [data-slot="card-header"] { display: grid; grid-template-columns: 44px 1fr; grid-template-rows: auto auto; column-gap: 14px; row-gap: 6px; align-items: center; }
+.dashboard-theme .dashboard-stat [data-slot="card-title"] { font-size: 28px; line-height: 1; font-weight: 700; }
+.dashboard-theme .dashboard-section-heading { grid-template-columns: 36px 1fr; grid-template-rows: auto auto; column-gap: 12px; row-gap: 2px; align-items: center; }
+.dashboard-theme [data-slot="input"], .dashboard-theme [data-slot="select-trigger"] { width: 100%; min-width: 0; height: 38px; border-radius: 7px; background: white; font-size: 13px; box-shadow: none; }
+.dashboard-theme [data-slot="input"]:focus-visible, .dashboard-theme [data-slot="select-trigger"]:focus-visible { box-shadow: 0 0 0 3px #102d5018; }
+.dashboard-theme [data-slot="input"]:disabled, .dashboard-theme [data-slot="select-trigger"]:disabled { background: #F0F2F5; opacity: .65; }
+.dashboard-theme [data-slot="label"] { font-size: 13px; line-height: 1.5; font-weight: 550; }
+.dashboard-theme [data-slot="select-value"] { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.dashboard-theme [data-slot="select-item"] { min-height: 34px; font-size: 13px; }
+.dashboard-theme [data-slot="button"] { min-height: 38px; gap: 8px; border-radius: 7px; padding-inline: 14px; font-size: 13px; font-weight: 550; }
+.dashboard-theme [data-slot="button"][data-size^="icon"] { width: 36px; min-height: 36px; height: 36px; padding: 0; flex-shrink: 0; }
+.dashboard-theme [data-slot="button"][data-variant="default"]:hover { background: #0B213D; }
+.dashboard-theme [data-slot="button"][data-variant="destructive"] { background: #FCEBEC; color: #C62828; }
+.dashboard-theme [data-slot="button"][data-variant="destructive"]:hover { background: #F9D9DB; }
+.dashboard-theme [data-slot="button"]:disabled { opacity: .55; }
+.dashboard-theme [data-slot="table-container"] { border: 1px solid var(--border); border-radius: 8px; }
+.dashboard-theme [data-slot="table"] { font-size: 13px; }
+.dashboard-theme [data-slot="table-header"] { background: #F0F4F8; }
+.dashboard-theme [data-slot="table-head"] { height: 42px; padding: 8px 14px; font-size: 12px; color: #33465A; font-weight: 600; }
+.dashboard-theme [data-slot="table-cell"] { height: 46px; padding: 5px 14px; font-size: 13px; }
+.dashboard-theme [data-slot="table-row"] { border-color: #E8EDF2; }
+.dashboard-theme [data-slot="table-body"] [data-slot="table-row"]:hover { background: #F7FAFD; }
+.dashboard-theme [data-slot="table-head"]:last-child.text-right, .dashboard-theme [data-slot="table-cell"]:last-child.text-right { width: 96px; white-space: nowrap; }
+.dashboard-theme [data-slot="badge"] { border-radius: 5px; padding: 3px 7px; font-size: 11px; line-height: 1.2; font-weight: 550; }
+.dashboard-theme .status-success { background: #EDF7EE; color: #2E7D32; border-color: #CCE5CE; }
+.dashboard-theme .status-warning { background: #FFF4E5; color: #9A5700; border-color: #F6D8AE; }
+.dashboard-theme .status-info { background: #EAF3FC; color: #1976D2; border-color: #CADFF5; }
+.dashboard-theme .status-error { background: #FDEEEF; color: #C62828; border-color: #F5CDCF; }
+.dashboard-theme .status-neutral { background: #F0F4F8; color: #5B6673; border-color: #D9E0E7; }
+.dashboard-theme.dashboard-dialog { width: calc(100% - 32px); max-width: 660px; max-height: calc(100dvh - 32px); overflow-y: auto; padding: 24px; gap: 20px; border: 1px solid var(--border); box-shadow: 0 24px 80px #102d4a30; }
+.dashboard-theme.dashboard-alert { width: calc(100% - 32px); max-width: 460px; max-height: calc(100dvh - 32px); overflow-y: auto; padding: 24px; border: 1px solid var(--border); box-shadow: 0 24px 80px #102d4a30; }
+.dashboard-theme [data-slot="dialog-title"], .dashboard-theme [data-slot="alert-dialog-title"] { font-size: 20px; font-weight: 650; }
+.dashboard-theme [data-slot="dialog-description"], .dashboard-theme [data-slot="alert-dialog-description"] { line-height: 1.6; font-size: 13px; }
+.dashboard-theme [data-slot="alert-dialog-footer"] { margin: 4px -24px -24px; padding: 16px 24px; }
+.dashboard-theme .dashboard-form-footer { padding-top: 16px; border-top: 1px solid var(--border); }
+body:has(.dashboard-shell) :is([data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"], [data-slot="sheet-overlay"]) { background: rgb(20 44 72 / 45%); backdrop-filter: blur(2px); }
+.dashboard-popover { z-index: 80; max-width: calc(100vw - 24px); overflow: hidden; border: 1px solid var(--border); border-radius: 10px; background: white; box-shadow: 0 12px 36px #1f2a371a; outline: none; }
+.dashboard-toast { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #CCE5CE; border-left: 4px solid #2E7D32; border-radius: 10px; background: white; box-shadow: 0 8px 32px #1f2a371a; }
+.dashboard-toast[data-state="closed"] { display: none; }
+@media (max-width: 767px) {
+  .dashboard-theme [data-slot="card"] { --card-spacing: 16px; }
+  .dashboard-theme.dashboard-dialog, .dashboard-theme.dashboard-alert { padding: 20px; }
+  .dashboard-theme [data-slot="alert-dialog-footer"] { margin-inline: -20px; margin-bottom: -20px; }
+  .dashboard-theme [data-slot="alert-dialog-footer"] form, .dashboard-theme [data-slot="alert-dialog-footer"] button { width: 100%; }
+  .dashboard-main h1 { font-size: 24px; }
+  .dashboard-main [data-slot="input"] { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-theme *, .dashboard-theme *::before { transition: none !important; animation: none !important; }
+}
+
+/* Íconos de los botones un poco más grandes sin cambiar la altura de los botones. */
+.dashboard-theme [data-variant] > svg.lucide { width: 18px; height: 18px; }
+.dashboard-theme [data-size^="icon"] > svg.lucide { width: 20px; height: 20px; }
+.dashboard-theme .dashboard-nav-link > svg.lucide { width: 22px; height: 22px; }

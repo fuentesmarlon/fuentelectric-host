@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía del trabajador · Fuentelectric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="hoja">
+
+<header class="portada">
+  <div class="logo"><img src="img/fte-logo.png" alt="FTE · Fuentelectric"></div>
+  <div class="tipo-doc">Guía de usuario · Trabajador</div>
+  <h1>Cómo consultar tus turnos</h1>
+  <p class="resumen">Entra desde tu celular o computadora y revisa en qué unidad, área y horario te toca trabajar.</p>
+  <div class="barra"></div>
+</header>
+
+<main class="contenido">
+
+<table class="ficha">
+  <tr><th>Código del documento</th><td>FTE-TUR-GU-04</td></tr>
+  <tr><th>Versión</th><td>1.0 · 6 de noviembre de 2026</td></tr>
+  <tr><th>Para</th><td>Personal con cuenta de <strong>trabajador</strong></td></tr>
+  <tr><th>Elaboró / aprobó</th><td>Pablo García · Marlon Fuentes</td></tr>
+</table>
+
+<h2><span class="num">1.</span> Lo que necesitas</h2>
+<ul>
+  <li>Un celular o computadora con internet.</li>
+  <li>Tu correo registrado en la empresa (el que te dio tu supervisor).</li>
+  <li>Acceso a ese correo, porque ahí te llega el código para entrar.</li>
+</ul>
+<p>La dirección del sistema es <code>https://fuentelectric-asistence-table.vercel.app</code></p>
+
+<h2><span class="num">2.</span> Entrar por primera vez</h2>
+<ol class="pasos">
+  <li>Abre la dirección del sistema y pulsa el botón para iniciar sesión.</li>
+  <li>Escribe tu correo y pulsa <span class="ui">Continuar</span>.</li>
+  <li>Revisa tu correo: te llega un mensaje de Fuentelectric con un <strong>código de 6 dígitos</strong>. Si no lo ves, busca en la carpeta de <em>Spam</em> o <em>Promociones</em>.</li>
+  <li>Escribe el código en el sistema y pulsa <span class="ui">Verificar e ingresar</span>.</li>
+</ol>
+<div class="consejo"><p>Una vez que entras, el sistema te recuerda por <strong>30 días</strong> en ese mismo celular o computadora. No tendrás que pedir otro código cada vez.</p></div>
+
+<h3>Si el código no llega</h3>
+<ul>
+  <li>Espera un minuto: cuando el contador llegue a cero aparecerá <span class="ui">Reenviar nuevo código</span>.</li>
+  <li>Si te equivocaste de correo, pulsa <span class="ui">Cambiar correo</span>.</li>
+  <li>Si dice que no encuentra tu cuenta, avisa a tu supervisor para que revise tu registro.</li>
+</ul>
+<div class="importante"><p>El código es personal. No lo compartas con nadie: nadie de la empresa te lo va a pedir.</p></div>
+
+<h2 class="salto"><span class="num">3.</span> Ver tus turnos</h2>
+<p>Al entrar se abre la pantalla <strong>Turnos</strong>, con la programación de <strong>hoy</strong>. Cada fila es un turno:</p>
+<table>
+  <thead><tr><th style="width:32%">Columna</th><th>Qué te dice</th></tr></thead>
+  <tbody>
+    <tr><td>Jornada y horario</td><td>☀ diurno o ☾ nocturno, y la hora de entrada y salida. Si dice <span class="etq aviso">Extra</span>, es un turno extra.</td></tr>
+    <tr><td>Vehículo</td><td>La unidad en la que sales (por ejemplo, A-111).</td></tr>
+    <tr><td>Trabajador</td><td>El nombre de cada persona. Las de la misma unidad aparecen juntas: esa es tu cuadrilla.</td></tr>
+    <tr><td>Área</td><td>La zona donde vas a trabajar.</td></tr>
+  </tbody>
+</table>
+
+<h3>Ver otros días</h3>
+<ul>
+  <li><span class="ui">Hoy</span>, <span class="ui">Mañana</span>, <span class="ui">Esta semana</span> o <span class="ui">Este mes</span>: cambia el periodo con un toque. En semana y mes aparece también la fecha de cada turno.</li>
+  <li><span class="ui">Ver un día</span>: elige cualquier fecha (también días pasados) y pulsa <span class="ui">Ver</span>.</li>
+  <li>Si hay muchos turnos, usa <span class="ui">Siguiente</span> y <span class="ui">Anterior</span> al final de la lista.</li>
+</ul>
+<div class="consejo"><p>Para encontrarte rápido en la lista, en el celular usa la opción <em>Buscar en la página</em> del navegador y escribe tu nombre.</p></div>
+
+<h2><span class="num">4.</span> Tenerlo a mano en el celular</h2>
+<ol class="pasos">
+  <li>Abre el sistema en el navegador del celular.</li>
+  <li><strong>Android (Chrome):</strong> menú <span class="ico">⋮</span> → <em>Agregar a pantalla principal</em>. <strong>iPhone (Safari):</strong> botón compartir → <em>Agregar a inicio</em>.</li>
+  <li>Te queda un ícono como el de cualquier aplicación.</li>
+</ol>
+
+<h2><span class="num">5.</span> Preguntas frecuentes</h2>
+<h4>¿Puedo cambiar mi turno desde el sistema?</h4>
+<p>No. Tu cuenta es solo para consultar. Si necesitas un cambio, pídelo a tu supervisor o al administrador.</p>
+<h4>Mi turno no aparece o está mal</h4>
+<p>Avisa a tu supervisor. Los turnos los registra el administrador; en cuanto él lo corrija, lo verás al actualizar la página.</p>
+<h4>Me sacó del sistema</h4>
+<p>Pasaron los 30 días, o cerraste sesión. Entra de nuevo con tu correo y un código nuevo.</p>
+<h4>¿Cómo salgo?</h4>
+<p>En el menú de la izquierda (en celular, botón <span class="ico">☰</span>) pulsa <span class="ui">Cerrar sesión</span>. Hazlo si usaste un celular o computadora que no es tuyo.</p>
+
+<div class="pie-doc"><span>FTE-TUR-GU-04 · Versión 1.0</span><span>Fuentelectric · Uso interno</span></div>
+</main>
+</div>
+</body>
+</html>
