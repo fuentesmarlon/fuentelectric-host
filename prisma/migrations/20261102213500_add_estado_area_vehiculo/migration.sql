@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Area" ADD COLUMN "estado" TEXT NOT NULL DEFAULT 'Activo';
+
+-- AlterTable
+ALTER TABLE "Vehiculo" ADD COLUMN "estado" TEXT NOT NULL DEFAULT 'DISPONIBLE';
+

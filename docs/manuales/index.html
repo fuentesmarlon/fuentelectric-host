@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manuales del sistema · Fuentelectric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+<style>
+  .doc { display: flex; gap: 16px; align-items: flex-start; text-decoration: none; color: inherit; border: 1px solid var(--borde); border-radius: 12px; padding: 18px 20px; margin: 0 0 12px; background: #fff; transition: border-color .15s, box-shadow .15s; }
+  .doc:hover { border-color: var(--azul); box-shadow: 0 6px 18px #0b213d14; }
+  .doc .cod { flex: none; width: 48px; height: 48px; border-radius: 10px; background: var(--azul); color: var(--amarillo); display: flex; align-items: center; justify-content: center; font-weight: 800; }
+  .doc h3 { margin: 0 0 2px; color: var(--azul); }
+  .doc p { margin: 0; color: var(--texto-suave); font-size: 13.5px; }
+  .doc .enlaces { margin-top: 8px; font-size: 13px; }
+  .doc .enlaces a { margin-right: 14px; }
+</style>
+</head>
+<body>
+<div class="hoja">
+<header class="portada">
+  <div class="logo"><img src="img/fte-logo.png" alt="FTE · Fuentelectric"></div>
+  <div class="tipo-doc">Documentación de entrega</div>
+  <h1>Sistema de asignación de turnos</h1>
+  <p class="resumen">Documentación, manual técnico, guías de usuario y presentación de funcionalidades. Versión 1.0 · noviembre de 2026.</p>
+  <div class="barra"></div>
+</header>
+<main class="contenido">
+  <p>Cada documento se puede leer aquí o descargar en PDF. Para imprimir, abra el documento y use <kbd>Ctrl</kbd>+<kbd>P</kbd>.</p>
+
+  <div class="doc"><div class="cod">01</div><div>
+    <h3>Documentación del sistema</h3>
+    <p>Qué hace el sistema, usuarios y permisos, módulos, reglas de negocio, estados y glosario. Para gerencia, operaciones y personal nuevo.</p>
+    <div class="enlaces"><a href="01-documentacion-del-sistema.html">Leer</a><a href="pdf/01-documentacion-del-sistema.pdf">PDF</a></div>
+  </div></div>
+
+  <div class="doc"><div class="cod">02</div><div>
+    <h3>Manual técnico</h3>
+    <p>Arquitectura, base de datos, entornos, despliegue, migraciones, cuentas, monitoreo, respaldos y solución de problemas. Para el personal técnico.</p>
+    <div class="enlaces"><a href="02-manual-tecnico.html">Leer</a><a href="pdf/02-manual-tecnico.pdf">PDF</a></div>
+  </div></div>
+
+  <div class="doc"><div class="cod">03</div><div>
+    <h3>Guía del administrador</h3>
+    <p>Paso a paso para asignar turnos, usar la carga masiva, mantener los catálogos y exportar reportes.</p>
+    <div class="enlaces"><a href="03-guia-administrador.html">Leer</a><a href="pdf/03-guia-administrador.pdf">PDF</a></div>
+  </div></div>
+
+  <div class="doc"><div class="cod">04</div><div>
+    <h3>Guía del trabajador</h3>
+    <p>Cómo entrar con el código del correo y consultar los turnos desde el celular.</p>
+    <div class="enlaces"><a href="04-guia-trabajador.html">Leer</a><a href="pdf/04-guia-trabajador.pdf">PDF</a></div>
+  </div></div>
+
+  <div class="doc"><div class="cod">05</div><div>
+    <h3>Presentación de funcionalidades</h3>
+    <p>14 diapositivas para presentar el sistema. Avance con las flechas del teclado; <kbd>F</kbd> para pantalla completa.</p>
+    <div class="enlaces"><a href="05-presentacion.html">Presentar</a><a href="pdf/05-presentacion.pdf">PDF</a></div>
+  </div></div>
+
+  <div class="pie-doc"><span>Fuentelectric · Uso interno</span><span>Elaboró: Pablo García · Aprobó: Marlon Fuentes</span></div>
+</main>
+</div>
+</body>
+</html>

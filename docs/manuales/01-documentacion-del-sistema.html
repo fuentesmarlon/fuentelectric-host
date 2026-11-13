@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentación del sistema · Fuentelectric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="hoja">
+
+<header class="portada">
+  <div class="logo"><img src="img/fte-logo.png" alt="FTE · Fuentelectric"></div>
+  <div class="tipo-doc">Documentación del sistema</div>
+  <h1>Sistema de asignación de turnos</h1>
+  <p class="resumen">Qué es el sistema, quién lo usa, qué hace cada módulo y cuáles son las reglas de negocio que aplica al asignar turnos a las cuadrillas.</p>
+  <div class="barra"></div>
+</header>
+
+<main class="contenido">
+
+<table class="ficha">
+  <tr><th>Código del documento</th><td>FTE-TUR-DOC-01</td></tr>
+  <tr><th>Versión</th><td>1.2</td></tr>
+  <tr><th>Fecha</th><td>10 de noviembre de 2026</td></tr>
+  <tr><th>Elaboró</th><td>Pablo García · Desarrollador</td></tr>
+  <tr><th>Revisó / aprobó</th><td>Marlon Fuentes · Gestor de proyecto</td></tr>
+  <tr><th>Estado</th><td>Versión de entrega</td></tr>
+  <tr><th>Documentos relacionados</th><td>FTE-TUR-MT-02 Manual técnico · FTE-TUR-GU-03 Guía del administrador · FTE-TUR-GU-04 Guía del trabajador</td></tr>
+</table>
+
+<h3>Historial de revisiones</h3>
+<table>
+  <thead><tr><th style="width:12%">Versión</th><th style="width:22%">Fecha</th><th>Cambios</th><th style="width:20%">Autor</th></tr></thead>
+  <tbody><tr><td>1.0</td><td>06/11/2026</td><td>Primera versión, para la salida a producción.</td><td>Pablo García</td></tr>
+    <tr><td>1.1</td><td>10/11/2026</td><td>Rol Superadministrador, sección Cuentas de acceso, sesión de administrador de 1 hora y entrada con contraseña o código.</td><td>Pablo García</td></tr>
+    <tr><td>1.2</td><td>10/11/2026</td><td>Cambio de contraseña obligatorio en el primer inicio de sesión y restablecimiento de contraseña desde Cuentas de acceso.</td><td>Pablo García</td></tr></tbody>
+</table>
+
+<nav class="indice">
+  <strong>Contenido</strong>
+  <ol>
+    <li><a href="#introduccion">Introducción</a></li>
+    <li><a href="#descripcion">Descripción general</a></li>
+    <li><a href="#roles">Usuarios y permisos</a></li>
+    <li><a href="#modulos">Módulos del sistema</a></li>
+    <li><a href="#reglas">Reglas de negocio</a></li>
+    <li><a href="#estados">Estados de los registros</a></li>
+    <li><a href="#datos">Información que guarda</a></li>
+    <li><a href="#seguridad">Seguridad y acceso</a></li>
+    <li><a href="#limites">Límites y comportamiento</a></li>
+    <li><a href="#alcance">Fuera de alcance y pendientes</a></li>
+    <li><a href="#glosario">Glosario</a></li>
+  </ol>
+</nav>
+
+<h2 id="introduccion"><span class="num">1.</span> Introducción</h2>
+<h3>1.1 Propósito</h3>
+<p>Este documento describe el sistema de asignación de turnos de Fuentelectric desde el punto de vista del negocio: qué problema resuelve, cómo está organizado y qué reglas sigue. Sirve como referencia común para operaciones, administración y para quien le dé mantenimiento en el futuro.</p>
+<h3>1.2 Alcance</h3>
+<p>Cubre la aplicación web publicada en <code>https://fuentelectric-asistence-table.vercel.app</code>: el inicio de sesión, el panel (Dashboard), la asignación de turnos, los catálogos de trabajadores, áreas y vehículos, y el historial con sus reportes en PDF y Excel. Los detalles de instalación y programación están en el <em>Manual técnico</em>.</p>
+<h3>1.3 A quién va dirigido</h3>
+<ul>
+  <li><strong>Gerencia y operaciones:</strong> para entender qué controla el sistema y qué no.</li>
+  <li><strong>Administradores del sistema:</strong> como complemento de la <em>Guía del administrador</em>.</li>
+  <li><strong>Personal técnico:</strong> como punto de partida antes del <em>Manual técnico</em>.</li>
+</ul>
+<h3>1.4 Convenciones</h3>
+<p>Los nombres de botones, campos y opciones se escriben como aparecen en pantalla, entre comillas angulares: <span class="ui">Registrar Asistencia</span>. Los estados se muestran con el mismo color que en el sistema, por ejemplo <span class="etq ok">Disponible</span>. Las horas están siempre en hora de Guatemala.</p>
+
+<h2 id="descripcion"><span class="num">2.</span> Descripción general</h2>
+<p>Antes, la programación de turnos de las cuadrillas se llevaba en hojas de Excel. El sistema la reemplaza por una aplicación web en la que el administrador asigna cada turno y el resto del personal lo consulta. Al guardar un turno, el sistema revisa automáticamente que se cumplan las reglas operativas (cupo de la unidad, doble jornada, entrega de la unidad entre jornadas), así se evitan errores que en Excel solo se detectaban en campo.</p>
+<div class="tarjetas">
+  <div class="tarjeta"><h4>Una sola fuente de verdad</h4><p>Todos ven la misma programación, actualizada al momento.</p></div>
+  <div class="tarjeta"><h4>Reglas automáticas</h4><p>El sistema no deja guardar un turno que rompa una regla.</p></div>
+  <div class="tarjeta"><h4>Trazabilidad</h4><p>Cada alta, cambio o eliminación queda en el registro de auditoría.</p></div>
+  <div class="tarjeta"><h4>Reportes listos</h4><p>Programa de turnos, horas y extras en PDF o Excel.</p></div>
+</div>
+
+<h3>2.1 Conceptos básicos</h3>
+<table>
+  <thead><tr><th style="width:24%">Concepto</th><th>Qué significa en el sistema</th></tr></thead>
+  <tbody>
+    <tr><td>Turno</td><td>Un bloque de 12 horas de un trabajador en un día, con jornada, horario, unidad y área.</td></tr>
+    <tr><td>Jornada</td><td><strong>Diurna</strong> o <strong>nocturna</strong>. Un trabajador puede tener como máximo una de cada en el mismo día.</td></tr>
+    <tr><td>Unidad (vehículo)</td><td>Carro o camión que sale a campo. Cada unidad tiene una capacidad de personas (normalmente 3).</td></tr>
+    <tr><td>Cuadrilla</td><td>Las personas asignadas a una misma unidad en la misma jornada.</td></tr>
+    <tr><td>Área operativa</td><td>La zona o departamento donde trabaja la cuadrilla (por ejemplo, Escuintla).</td></tr>
+  </tbody>
+</table>
+
+<h2 id="roles"><span class="num">3.</span> Usuarios y permisos</h2>
+<p>Hay tres tipos de cuenta. El superadministrador crea las cuentas y elige el tipo desde la sección <strong>Cuentas de acceso</strong>.</p>
+<table>
+  <thead><tr><th style="width:22%">Rol</th><th style="width:30%">Cómo entra</th><th>Qué puede hacer</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Superadministrador</strong></td><td>Igual que el administrador. La sesión dura <strong>1 hora</strong>.</td><td>Todo lo del administrador y, además, crear, editar y eliminar las cuentas de acceso.</td></tr>
+    <tr><td><strong>Administrador</strong></td><td>Correo y, a su elección, su contraseña o un código de 6 dígitos que llega al correo. La sesión dura <strong>1 hora</strong>.</td><td>Todo: ver el Dashboard, asignar, editar y eliminar turnos, carga masiva por Excel, administrar trabajadores, áreas y vehículos, consultar el historial y exportar reportes.</td></tr>
+    <tr><td><strong>Trabajador</strong></td><td>Correo y un código de 6 dígitos que llega al correo. La sesión dura <strong>30 días</strong>.</td><td>Solo consulta: ve el Dashboard con los turnos del día, la semana, el mes o una fecha elegida. No puede modificar nada.</td></tr>
+  </tbody>
+</table>
+<div class="nota"><p>La <strong>cuenta</strong> (para iniciar sesión) y el <strong>trabajador</strong> (la persona a la que se le asignan turnos) son registros separados. Un trabajador puede tener turnos sin tener cuenta, y una cuenta no muestra “mis turnos” por persona. Ver la sección 10.</p></div>
+
+<h2 id="modulos" class="salto"><span class="num">4.</span> Módulos del sistema</h2>
+<div class="tarjetas">
+  <div class="tarjeta"><span class="rol etq info">Todos</span><h4>Dashboard</h4><p>Turnos de hoy por defecto; también mañana, la semana, el mes o un día concreto.</p></div>
+  <div class="tarjeta"><span class="rol etq aviso">Admin</span><h4>Asignación de turnos</h4><p>Registrar, editar y eliminar turnos. Calendario, tabla, filtros y carga masiva.</p></div>
+  <div class="tarjeta"><span class="rol etq aviso">Admin</span><h4>Trabajadores</h4><p>Altas, puesto, horario establecido, unidad fija y estado del personal.</p></div>
+  <div class="tarjeta"><span class="rol etq aviso">Admin</span><h4>Áreas operativas</h4><p>Zonas donde se asignan los turnos.</p></div>
+  <div class="tarjeta"><span class="rol etq aviso">Admin</span><h4>Vehículos</h4><p>Unidades, tipo, capacidad y estado.</p></div>
+  <div class="tarjeta"><span class="rol etq aviso">Admin</span><h4>Historial y reportes</h4><p>Registro de auditoría y exportación a PDF o Excel.</p></div>
+  <div class="tarjeta"><span class="rol etq error">Superadmin</span><h4>Cuentas de acceso</h4><p>Crear, editar y eliminar quién puede iniciar sesión y con qué rol.</p></div>
+</div>
+
+<h3>4.1 Dashboard</h3>
+<p>Es la pantalla de inicio de todos los usuarios. Muestra la lista de turnos ordenada por día, jornada (diurnos primero), hora de entrada, unidad y nombre, para que cada cuadrilla aparezca junta. Por defecto se ven los turnos de <strong>hoy</strong>; con los botones <span class="ui">Mañana</span>, <span class="ui">Esta semana</span> y <span class="ui">Este mes</span> se cambia el periodo, y con <span class="ui">Ver un día</span> se elige cualquier fecha, pasada o futura. La lista se pagina de 50 en 50. Los administradores ven además cuatro tarjetas de resumen (trabajadores, vehículos, áreas y turnos de hoy) y la columna <span class="ui">Registrado por</span>.</p>
+
+<h3>4.2 Asignación de turnos</h3>
+<p>Aquí se registra cada turno con: fecha, trabajador, tipo de turno, horario, vehículo, área, si es turno extra, si usa cupo extra y un comentario opcional. Mientras se llena el formulario, el sistema muestra ayudas: qué horarios son compatibles, cuántas personas lleva ya la unidad y si el trabajador ya tiene otro turno ese día.</p>
+<ul>
+  <li><strong>Vista Calendario</strong> y <strong>Vista Tabla</strong> para consultar lo registrado, con filtros por fecha, trabajador, vehículo, área, jornada, horario y turno extra.</li>
+  <li>Los turnos de fechas que ya pasaron aparecen como <span class="etq neutra">Cerrado</span>: se ven, pero ya no se pueden editar ni eliminar.</li>
+  <li><strong>Carga masiva (Excel):</strong> se descarga una plantilla, se llena y se sube; el sistema valida cada fila con las mismas reglas que el formulario y devuelve el detalle de las filas rechazadas.</li>
+</ul>
+
+<h3>4.3 Trabajadores, áreas y vehículos</h3>
+<p>Son los catálogos que alimentan la asignación. Ningún registro se borra de verdad: el botón de eliminar lo <strong>desactiva</strong> (deja de aparecer al asignar turnos, pero su historial se conserva) y el botón <span class="ui">Reactivar</span> lo devuelve a su estado activo.</p>
+
+<h3>4.4 Historial y reportes</h3>
+<p>Muestra el registro de auditoría (quién creó, editó o eliminó cada turno y cuándo) y permite exportar tres tipos de reporte, en PDF o Excel, para un rango de fechas o todo el historial:</p>
+<table>
+  <thead><tr><th style="width:28%">Reporte</th><th>Contenido</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Programa de Turnos</strong> <span class="etq ok">por defecto</span></td><td>Matriz por unidad y trabajador con un código por día, y el resumen de horas y extras.</td></tr>
+    <tr><td><strong>Reporte Completo</strong></td><td>La matriz, el detalle de turnos extras y la auditoría.</td></tr>
+    <tr><td><strong>Solo Auditoría</strong></td><td>La bitácora de creaciones, ediciones y bajas.</td></tr>
+  </tbody>
+</table>
+<p>Códigos de la matriz: <strong>12D</strong> diurno, <strong>12N</strong> nocturno, <strong>12D+ / 12N+</strong> turno extra, <strong>24H</strong> doble jornada y <strong>D</strong> descanso o sin turno.</p>
+
+<h3>4.5 Cuentas de acceso</h3>
+<p>Solo la ve el superadministrador. Muestra todas las cuentas con su rol y su último acceso, y permite crear una cuenta nueva (nombre, correo, rol y, para administradores, contraseña), editarla o eliminarla. Al crear una cuenta de administrador, o al restablecer su contraseña, se puede marcar <strong>Pedir cambio de contraseña al iniciar sesión</strong>: la próxima vez que la persona entre, el sistema le pide elegir una contraseña propia antes de dejarla usar el panel. Para no quedarse sin acceso, nadie puede eliminarse ni cambiarse el rol a sí mismo y siempre debe quedar al menos un superadministrador.</p>
+
+<h2 id="reglas" class="salto"><span class="num">5.</span> Reglas de negocio</h2>
+<p>Estas reglas se aplican siempre en el servidor al guardar, tanto desde el formulario como desde la carga masiva. Las ayudas que se ven en pantalla son solo orientación: aunque alguien las ignore, el sistema no guarda un turno que rompa una regla.</p>
+
+<h3>5.1 Jornadas y horarios</h3>
+<table>
+  <thead><tr><th>Jornada</th><th>Horarios disponibles</th></tr></thead>
+  <tbody>
+    <tr><td>Diurna</td><td>06:00 – 18:00 · 07:00 – 19:00 · 08:00 – 20:00 · 09:00 – 21:00</td></tr>
+    <tr><td>Nocturna</td><td>19:00 – 07:00 · 20:00 – 08:00 · 21:00 – 09:00 (terminan al día siguiente)</td></tr>
+  </tbody>
+</table>
+
+<h3>5.2 Reglas al asignar un turno</h3>
+<table>
+  <thead><tr><th style="width:5%">#</th><th style="width:30%">Regla</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td>R1</td><td>Un turno por jornada</td><td>Un trabajador no puede tener dos turnos de la misma jornada el mismo día.</td></tr>
+    <tr><td>R2</td><td>Doble jornada</td><td>Un trabajador puede tener un turno diurno y uno nocturno el mismo día solo si <strong>uno de los dos está marcado como turno extra</strong> y los horarios no se cruzan. Ejemplo: 07:00–19:00 es compatible con 19:00–07:00, pero 09:00–21:00 no lo es con 19:00–07:00.</td></tr>
+    <tr><td>R3</td><td>Entrega de la unidad</td><td>Una unidad puede usarse en las dos jornadas del día, siempre que la jornada diurna termine antes o a la misma hora en que empieza la nocturna.</td></tr>
+    <tr><td>R4</td><td>Cupo de la unidad</td><td>Cada jornada de una unidad admite hasta su capacidad (normalmente 3 personas). Para agregar más hay que marcar <span class="ui">Cupo extra</span>.</td></tr>
+    <tr><td>R5</td><td>Solo registros activos</td><td>Solo se asignan trabajadores en estado <span class="etq ok">Personal (Activo)</span>, unidades <span class="etq ok">Disponible</span> y áreas <span class="etq ok">Activa</span>.</td></tr>
+    <tr><td>R6</td><td>Puestos que no se asignan</td><td>Nunca se asignan turnos a personas con puesto <strong>Gerente General, Administrador, Administrativo Jr, Gerente Administrativo</strong> o <strong>Supervisor SISO</strong>. No aparecen en la lista ni en la plantilla de Excel.</td></tr>
+    <tr><td>R7</td><td>Turnos cerrados</td><td>Un turno cuya fecha ya pasó no se puede editar, eliminar ni mover a otra fecha pasada. Sí se puede <em>registrar</em> un turno de un día pasado (para dejar constancia), pero queda cerrado desde ese momento.</td></tr>
+    <tr><td>R8</td><td>Asignaciones simultáneas</td><td>Si dos administradores guardan turnos del mismo día al mismo tiempo, el sistema los procesa uno tras otro para que no se exceda el cupo.</td></tr>
+  </tbody>
+</table>
+
+<h3>5.3 Desactivar en lugar de borrar</h3>
+<p>Al eliminar un trabajador, un área o un vehículo, el registro cambia de estado y deja de estar disponible para nuevos turnos, pero todos sus turnos anteriores se conservan en el historial y en los reportes. Al desactivar un trabajador o dar de baja un vehículo, el trabajador pierde su unidad fija; al reactivarlo hay que asignársela de nuevo desde <span class="ui">Editar</span> si hace falta.</p>
+
+<h2 id="estados"><span class="num">6.</span> Estados de los registros</h2>
+<table>
+  <thead><tr><th style="width:18%">Registro</th><th style="width:34%">Estado</th><th>Significado</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="4">Trabajador</td><td><span class="etq ok">Personal (Activo)</span></td><td>Disponible para recibir turnos.</td></tr>
+    <tr><td><span class="etq info">Vacaciones</span></td><td>Temporalmente fuera; no aparece al asignar.</td></tr>
+    <tr><td><span class="etq error">Incapacidad</span></td><td>Temporalmente fuera por incapacidad médica; no aparece al asignar.</td></tr>
+    <tr><td><span class="etq neutra">Inactivo (Baja)</span></td><td>Dado de baja con el botón de eliminar. Se puede reactivar.</td></tr>
+    <tr><td rowspan="5">Vehículo</td><td><span class="etq ok">Disponible</span></td><td>Listo para salir a campo.</td></tr>
+    <tr><td><span class="etq aviso">En Taller / Mantenimiento</span></td><td>En reparación o servicio.</td></tr>
+    <tr><td><span class="etq aviso">En Inspección</span></td><td>En revisión técnica o legal.</td></tr>
+    <tr><td><span class="etq error">Vendido</span></td><td>Ya no pertenece a la empresa; se conserva su historial.</td></tr>
+    <tr><td><span class="etq error">Dado de Baja / Chatarra</span></td><td>Retirado con el botón de eliminar. Se puede reactivar.</td></tr>
+    <tr><td rowspan="2">Área</td><td><span class="etq ok">Activa</span></td><td>Disponible para turnos.</td></tr>
+    <tr><td><span class="etq neutra">Inactiva (Baja)</span></td><td>Desactivada con el botón de eliminar. Se puede reactivar.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="datos"><span class="num">7.</span> Información que guarda</h2>
+<table>
+  <thead><tr><th style="width:24%">Información</th><th>Qué contiene</th></tr></thead>
+  <tbody>
+    <tr><td>Cuentas de acceso</td><td>Nombre, correo y rol (administrador o trabajador). Las contraseñas las guarda Supabase cifradas; el sistema nunca las ve.</td></tr>
+    <tr><td>Trabajadores</td><td>Nombre, puesto, horario establecido, unidad fija y estado.</td></tr>
+    <tr><td>Áreas y vehículos</td><td>Nombre o código, tipo y capacidad del vehículo, y estado.</td></tr>
+    <tr><td>Turnos</td><td>Fecha, trabajador, jornada, horario, unidad, área, extra, cupo extra, comentario y quién lo registró. Guarda también una copia de los nombres, para que un turno antiguo siga mostrando lo que era ese día aunque después se renombre o desactive algo.</td></tr>
+    <tr><td>Auditoría</td><td>Una entrada por cada creación, edición o eliminación de turno, con fecha y hora y el administrador responsable.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="seguridad"><span class="num">8.</span> Seguridad y acceso</h2>
+<ul>
+  <li>Solo entra quien tiene una cuenta registrada. Sin sesión, cualquier dirección del sistema lleva a la pantalla de inicio de sesión.</li>
+  <li>Cada página y cada acción vuelven a comprobar en el servidor el rol y la vigencia de la sesión; ocultar un botón no es la única protección.</li>
+  <li>Las sesiones caducan: 1 hora para administradores y superadministradores, y 30 días para trabajadores.</li>
+  <li>El inicio de sesión limita los intentos y el envío de códigos para frenar abusos.</li>
+  <li>La base de datos tiene activada la seguridad por filas (RLS) y solo el servidor de la aplicación tiene acceso a ella.</li>
+  <li>Los errores se registran en Sentry sin datos personales (sin IP, cookies ni encabezados).</li>
+</ul>
+
+<h2 id="limites"><span class="num">9.</span> Límites y comportamiento</h2>
+<table>
+  <thead><tr><th style="width:38%">Aspecto</th><th>Comportamiento</th></tr></thead>
+  <tbody>
+    <tr><td>Zona horaria</td><td>Todo se calcula en hora de Guatemala (UTC-6), aunque el servidor esté en otro país.</td></tr>
+    <tr><td>Periodo en Asignación de turnos</td><td>Se carga el mes visible del calendario o un rango de hasta 93 días. Para periodos más largos se usan los reportes.</td></tr>
+    <tr><td>Paginación</td><td>Dashboard y tabla de turnos: 50 por página. Historial: 100 por página.</td></tr>
+    <tr><td>Carga masiva</td><td>Archivos .xlsx o .xls con la estructura de la plantilla. Las filas válidas se guardan aunque otras tengan errores.</td></tr>
+    <tr><td>Navegadores</td><td>Versiones actuales de Chrome, Edge, Firefox y Safari, en computadora o celular.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="alcance"><span class="num">10.</span> Fuera de alcance y pendientes</h2>
+<ul>
+  <li><strong>Vista “mis turnos”:</strong> hoy un trabajador ve todos los turnos, no solo los suyos, porque la cuenta y el registro de trabajador no están vinculados. Queda pendiente de definir con operaciones.</li>
+  <li><strong>Patrón 4x2:</strong> el sistema no genera la rotación automáticamente; el administrador asigna cada turno y el sistema valida las reglas de la sección 5.</li>
+  <li><strong>Excepciones y reemplazos:</strong> feriados, emergencias y sustitutos temporales todavía no tienen un flujo propio; se manejan con turnos extra y comentarios.</li>
+</ul>
+
+<h2 id="glosario"><span class="num">11.</span> Glosario</h2>
+<table>
+  <tbody>
+    <tr><td style="width:26%"><strong>Auditoría</strong></td><td>Registro automático de quién creó, editó o eliminó cada turno.</td></tr>
+    <tr><td><strong>Carga masiva</strong></td><td>Registrar muchos turnos a la vez subiendo un archivo de Excel.</td></tr>
+    <tr><td><strong>Cupo extra</strong></td><td>Permiso para asignar más personas de las que admite la unidad en una jornada.</td></tr>
+    <tr><td><strong>Doble jornada</strong></td><td>Que una misma persona trabaje el turno diurno y el nocturno del mismo día.</td></tr>
+    <tr><td><strong>Código de acceso (OTP)</strong></td><td>Código de un solo uso que llega por correo para que el trabajador inicie sesión.</td></tr>
+    <tr><td><strong>Desactivar / reactivar</strong></td><td>Quitar o devolver un registro de la lista de disponibles sin borrar su historial.</td></tr>
+    <tr><td><strong>Turno cerrado</strong></td><td>Turno de una fecha que ya pasó; es de solo lectura.</td></tr>
+    <tr><td><strong>Turno extra</strong></td><td>Turno adicional al habitual del trabajador; habilita la doble jornada.</td></tr>
+  </tbody>
+</table>
+
+<div class="pie-doc"><span>FTE-TUR-DOC-01 · Versión 1.2</span><span>Fuentelectric · Uso interno</span></div>
+</main>
+</div>
+</body>
+</html>

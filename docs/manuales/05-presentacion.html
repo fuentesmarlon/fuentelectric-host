@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presentación del sistema · Fuentelectric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Presentación de funcionalidades. Flechas ← → o clic para avanzar; F para pantalla completa.
+     Para PDF: Ctrl+P → Guardar como PDF (una diapositiva por página). */
+  :root {
+    --noche: #0B213D; --azul: #102D50; --azul-claro: #EAF2FA; --amarillo: #F2E500;
+    --texto: #1F2A37; --suave: #5B6673; --borde: #D9E0E7; --fondo: #F5F7FA;
+    --ok: #2E7D32; --ok-f: #EDF7EE; --aviso: #9A5700; --aviso-f: #FFF4E5; --info: #1976D2; --info-f: #EAF3FC; --err: #C62828; --err-f: #FDEEEF;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #06152a; font-family: Inter, "Segoe UI", Arial, sans-serif; color: var(--texto); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .escenario { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .diapo {
+    position: absolute; width: 1280px; height: 720px; overflow: hidden;
+    background: #fff; border-radius: 6px; padding: 64px 72px;
+    transform-origin: center; display: none; flex-direction: column;
+  }
+  .diapo.activa { display: flex; }
+  .diapo.oscura { background: var(--noche); color: #fff; }
+  .diapo .etiqueta { color: var(--azul); font-size: 15px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  .diapo.oscura .etiqueta { color: var(--amarillo); }
+  .diapo h1 { font-size: 64px; line-height: 1.05; margin: 18px 0 20px; font-weight: 800; letter-spacing: -.02em; }
+  .diapo h2 { font-size: 44px; line-height: 1.12; margin: 12px 0 10px; color: var(--noche); font-weight: 800; letter-spacing: -.01em; }
+  .diapo.oscura h2 { color: #fff; }
+  .diapo .lead { font-size: 22px; line-height: 1.5; color: var(--suave); max-width: 900px; margin: 0; }
+  .diapo.oscura .lead { color: #C9D8E8; }
+  .barra { width: 72px; height: 6px; border-radius: 3px; background: var(--amarillo); margin-top: 14px; }
+  .pie { position: absolute; left: 72px; right: 72px; bottom: 28px; display: flex; justify-content: space-between; font-size: 13px; color: var(--suave); }
+  .diapo.oscura .pie { color: #8FA6BF; }
+  .cuerpo { flex: 1; display: grid; gap: 28px; margin-top: 30px; align-content: start; }
+  .dos { grid-template-columns: 1fr 1fr; }
+  .tres { grid-template-columns: repeat(3, 1fr); }
+  .tarjeta { border: 1px solid var(--borde); border-radius: 14px; padding: 24px 26px; background: #fff; }
+  .tarjeta h3 { margin: 0 0 8px; font-size: 22px; color: var(--azul); }
+  .tarjeta p { margin: 0; font-size: 17px; line-height: 1.5; color: var(--suave); }
+  .tarjeta .n { display: inline-flex; width: 40px; height: 40px; border-radius: 10px; background: var(--azul); color: var(--amarillo); align-items: center; justify-content: center; font-weight: 800; font-size: 18px; margin-bottom: 14px; }
+  .compacta .tarjeta { padding: 18px 20px; } .compacta .tarjeta .n { margin-bottom: 8px; width: 34px; height: 34px; } .compacta .tarjeta h3 { font-size: 20px; }
+  .lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .lista li { position: relative; padding-left: 34px; font-size: 21px; line-height: 1.45; }
+  .lista li::before { content: ""; position: absolute; left: 0; top: 9px; width: 16px; height: 16px; border-radius: 4px; background: var(--amarillo); box-shadow: inset 0 0 0 4px var(--azul); }
+  .diapo.oscura .lista li::before { box-shadow: inset 0 0 0 4px var(--noche); }
+  .lista strong { color: var(--azul); }
+  .diapo.oscura .lista strong { color: var(--amarillo); }
+  .etq { display: inline-block; border: 1px solid; border-radius: 6px; padding: 2px 9px; font-size: 14px; font-weight: 600; }
+  .etq.ok { background: var(--ok-f); color: var(--ok); border-color: #CCE5CE; }
+  .etq.aviso { background: var(--aviso-f); color: var(--aviso); border-color: #F6D8AE; }
+  .etq.info { background: var(--info-f); color: var(--info); border-color: #CADFF5; }
+  .etq.err { background: var(--err-f); color: var(--err); border-color: #F5CDCF; }
+  .etq.neu { background: #F0F4F8; color: var(--suave); border-color: var(--borde); }
+
+  /* Maquetas simplificadas de pantallas del sistema */
+  .ventana { border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px #0b213d22; background: var(--fondo); }
+  .ventana .top { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #fff; border-bottom: 1px solid var(--borde); font-size: 13px; font-weight: 600; color: var(--azul); }
+  .ventana .top i { width: 9px; height: 9px; border-radius: 50%; background: var(--borde); display: inline-block; }
+  .ventana .dentro { display: flex; min-height: 300px; }
+  .ventana .menu { width: 128px; background: var(--noche); padding: 12px 8px; display: grid; gap: 6px; align-content: start; }
+  .ventana .menu span { display: block; padding: 6px 8px; border-radius: 6px; color: #C9D8E8; font-size: 11px; }
+  .ventana .menu span.sel { background: var(--azul); color: var(--amarillo); font-weight: 700; }
+  .ventana .area { flex: 1; padding: 14px; }
+  .chips { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .chip { font-size: 11px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--borde); background: #fff; color: var(--texto); font-weight: 600; }
+  .chip.sel { background: var(--azul); color: #fff; border-color: var(--azul); }
+  .tabla { width: 100%; border-collapse: collapse; background: #fff; font-size: 12px; border-radius: 8px; overflow: hidden; }
+  .tabla th { background: #F0F4F8; color: #33465A; text-align: left; padding: 7px 9px; font-weight: 600; }
+  .tabla td { padding: 7px 9px; border-top: 1px solid #E8EDF2; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal div { background: #fff; border: 1px solid var(--borde); border-radius: 6px; min-height: 52px; padding: 4px; font-size: 10px; color: var(--suave); }
+  .cal b { display: block; margin-top: 3px; border-radius: 4px; padding: 2px 4px; font-weight: 600; font-size: 9.5px; }
+  .cal b.d { background: #DCFCE7; color: #166534; } .cal b.n { background: #DBEAFE; color: #1E40AF; } .cal b.x { background: #FEF3C7; color: #92400E; }
+  .form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .campo { background: #fff; border: 1px solid var(--borde); border-radius: 7px; padding: 7px 10px; font-size: 11.5px; }
+  .campo small { display: block; color: var(--suave); font-size: 10px; }
+  .aviso-ui { grid-column: 1 / -1; border-radius: 7px; padding: 8px 10px; font-size: 11.5px; background: var(--aviso-f); color: var(--aviso); border: 1px solid #F6D8AE; }
+  .boton-ui { grid-column: 1 / -1; background: var(--azul); color: #fff; border-radius: 7px; padding: 9px; text-align: center; font-weight: 700; font-size: 12px; }
+  .codigos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .codigo { border-radius: 12px; padding: 18px 10px; text-align: center; font-weight: 800; font-size: 28px; }
+  .codigo small { display: block; font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .antes-ahora { display: grid; grid-template-columns: 1fr 60px 1fr; align-items: center; gap: 12px; }
+  .flecha { font-size: 40px; color: var(--amarillo); text-align: center; font-weight: 800; }
+  .logo { background: #fff; border-radius: 12px; padding: 12px 18px; display: inline-block; align-self: flex-start; }
+  .logo img { height: 62px; display: block; }
+  .circulo { position: absolute; right: -120px; top: -120px; width: 460px; height: 460px; border-radius: 50%; border: 60px solid rgba(242,229,0,.10); }
+  .grande { font-size: 92px; font-weight: 800; color: var(--amarillo); line-height: 1; }
+
+  .controles { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; align-items: center; color: #8FA6BF; font: 13px Inter, sans-serif; z-index: 10; }
+  .controles button { background: #102D50; color: #fff; border: 1px solid #2a4566; border-radius: 8px; padding: 7px 14px; font: 600 13px Inter, sans-serif; cursor: pointer; }
+  .controles button:hover { background: #17406f; }
+
+  @page { size: 1280px 720px; margin: 0; }
+  @media print {
+    html, body { background: #fff; height: auto; }
+    .escenario { position: static; display: block; }
+    .diapo { display: flex !important; position: relative; transform: none !important; border-radius: 0; break-after: page; }
+    .controles { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="escenario" id="escenario">
+
+<!-- 1 · Portada -->
+<section class="diapo oscura">
+  <div class="circulo"></div>
+  <div class="logo"><img src="img/fte-logo.png" alt="FTE · Fuentelectric"></div>
+  <div style="margin-top:auto">
+    <div class="etiqueta">Presentación de funcionalidades</div>
+    <h1>Sistema de asignación<br>de turnos</h1>
+    <p class="lead">La programación de las cuadrillas, en un solo lugar, con las reglas operativas aplicadas automáticamente.</p>
+    <div class="barra"></div>
+  </div>
+  <div class="pie"><span>Fuentelectric · Noviembre 2026</span><span>Versión 1.0</span></div>
+</section>
+
+<!-- 2 · Antes y ahora -->
+<section class="diapo">
+  <div class="etiqueta">El cambio</div>
+  <h2>De la hoja de Excel a un sistema en línea</h2>
+  <div class="cuerpo">
+    <div class="antes-ahora">
+      <div class="tarjeta"><h3>Antes</h3>
+        <ul class="lista" style="gap:10px">
+          <li style="font-size:18px">Un archivo por persona o por semana</li>
+          <li style="font-size:18px">Errores de cupo o de doble turno que se veían en campo</li>
+          <li style="font-size:18px">Sin registro de quién cambió qué</li>
+          <li style="font-size:18px">Reportes armados a mano</li>
+        </ul>
+      </div>
+      <div class="flecha">→</div>
+      <div class="tarjeta" style="border-color:var(--azul); box-shadow:0 0 0 3px var(--azul-claro)"><h3>Ahora</h3>
+        <ul class="lista" style="gap:10px">
+          <li style="font-size:18px">Todos ven la misma programación al momento</li>
+          <li style="font-size:18px">El sistema no deja guardar un turno que rompe una regla</li>
+          <li style="font-size:18px">Auditoría automática de cada cambio</li>
+          <li style="font-size:18px">Reportes PDF y Excel con un clic</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>2</span></div>
+</section>
+
+<!-- 3 · Quién lo usa -->
+<section class="diapo">
+  <div class="etiqueta">Usuarios</div>
+  <h2>Tres perfiles, cada uno con lo que necesita</h2>
+  <div class="cuerpo tres">
+    <div class="tarjeta"><div class="n">S</div><h3>Superadministrador</h3>
+      <p>Todo lo del administrador y además crea, edita y elimina las cuentas de acceso.</p>
+      <p style="margin-top:14px"><span class="etq aviso">Contraseña o código</span> <span class="etq neu">Sesión de 1 hora</span></p>
+    </div>
+    <div class="tarjeta"><div class="n">A</div><h3>Administrador</h3>
+      <p>Programa los turnos, mantiene al personal, las áreas y las unidades, y saca los reportes.</p>
+      <p style="margin-top:14px"><span class="etq aviso">Contraseña o código</span> <span class="etq neu">Sesión de 1 hora</span></p>
+    </div>
+    <div class="tarjeta"><div class="n">T</div><h3>Trabajador</h3>
+      <p>Consulta desde el celular los turnos de hoy, mañana, la semana o el mes.</p>
+      <p style="margin-top:14px"><span class="etq info">Correo + código por correo</span> <span class="etq neu">Sesión de 30 días</span></p>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>3</span></div>
+</section>
+
+<!-- 4 · Módulos -->
+<section class="diapo">
+  <div class="etiqueta">Mapa del sistema</div>
+  <h2>Siete módulos</h2>
+  <div class="cuerpo compacta" style="grid-template-columns:repeat(4,1fr); gap:18px">
+    <div class="tarjeta"><div class="n">1</div><h3>Dashboard</h3><p>Los turnos del día y el resumen general.</p></div>
+    <div class="tarjeta"><div class="n">2</div><h3>Asignación de turnos</h3><p>Registrar, editar, calendario, filtros y carga masiva.</p></div>
+    <div class="tarjeta"><div class="n">3</div><h3>Trabajadores</h3><p>Personal, puesto, horario y estado.</p></div>
+    <div class="tarjeta"><div class="n">4</div><h3>Áreas operativas</h3><p>Zonas donde se asignan los turnos.</p></div>
+    <div class="tarjeta"><div class="n">5</div><h3>Vehículos</h3><p>Unidades, capacidad y estado.</p></div>
+    <div class="tarjeta"><div class="n">6</div><h3>Historial y reportes</h3><p>Auditoría y exportación PDF / Excel.</p></div>
+    <div class="tarjeta"><div class="n">7</div><h3>Cuentas de acceso</h3><p>Solo el superadministrador: quién puede entrar al sistema y con qué rol.</p></div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>4</span></div>
+</section>
+
+<!-- 5 · Dashboard -->
+<section class="diapo">
+  <div class="etiqueta">Módulo 1 · Dashboard</div>
+  <h2>Hoy, a primera vista</h2>
+  <div class="cuerpo dos" style="grid-template-columns: 1fr 1.25fr; align-items:center">
+    <ul class="lista">
+      <li>Abre con los turnos de <strong>hoy</strong></li>
+      <li>Cambia a <strong>mañana, la semana o el mes</strong> con un clic</li>
+      <li><strong>Ver un día</strong>: cualquier fecha, también pasadas</li>
+      <li>Ordenado por jornada, hora y unidad: <strong>cada cuadrilla junta</strong></li>
+    </ul>
+    <div class="ventana">
+      <div class="top"><i></i><i></i><i></i>&nbsp;Turnos de hoy</div>
+      <div class="dentro">
+        <div class="menu"><span class="sel">Dashboard</span><span>Asignación</span><span>Trabajadores</span><span>Áreas</span><span>Vehículos</span><span>Historial</span></div>
+        <div class="area">
+          <div class="chips"><span class="chip sel">Hoy</span><span class="chip">Mañana</span><span class="chip">Esta semana</span><span class="chip">Este mes</span></div>
+          <table class="tabla">
+            <tr><th>Jornada</th><th>Vehículo</th><th>Trabajador</th><th>Área</th></tr>
+            <tr><td>☀ 07:00 – 19:00</td><td>A-111</td><td>Trabajador 1</td><td>Escuintla</td></tr>
+            <tr><td>☀ 07:00 – 19:00</td><td>A-111</td><td>Trabajador 2</td><td>Escuintla</td></tr>
+            <tr><td>☀ 07:00 – 19:00</td><td>A-111</td><td>Trabajador 3</td><td>Escuintla</td></tr>
+            <tr><td>☾ 19:00 – 07:00 <span class="etq aviso" style="font-size:9px">Extra</span></td><td>A-112</td><td>Trabajador 4</td><td>Escuintla</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>5</span></div>
+</section>
+
+<!-- 6 · Asignar -->
+<section class="diapo">
+  <div class="etiqueta">Módulo 2 · Asignación de turnos</div>
+  <h2>Un formulario que avisa antes de equivocarse</h2>
+  <div class="cuerpo dos" style="grid-template-columns: 1.1fr 1fr; align-items:center">
+    <div class="ventana">
+      <div class="top"><i></i><i></i><i></i>&nbsp;Nuevo turno</div>
+      <div class="area" style="padding:16px">
+        <div class="form">
+          <div class="campo"><small>Trabajador</small>Trabajador 4</div>
+          <div class="campo"><small>Fecha</small>20/11/2026</div>
+          <div class="campo"><small>Tipo de Turno</small>Diurno</div>
+          <div class="campo"><small>Horario Base</small>07:00 – 19:00</div>
+          <div class="campo"><small>Área Operativa</small>Escuintla</div>
+          <div class="campo"><small>Vehículo Asignado</small>A-111 · 3/3 en turno</div>
+          <div class="aviso-ui">La unidad A-111 ya tiene 3 de 3 personas en este turno. Marca «Cupo extra» para asignar una persona adicional.</div>
+          <div class="boton-ui">Registrar Asistencia</div>
+        </div>
+      </div>
+    </div>
+    <ul class="lista">
+      <li>Busca al trabajador por <strong>nombre o puesto</strong></li>
+      <li>Muestra el <strong>cupo</strong> de cada unidad en esa jornada</li>
+      <li>Deshabilita los <strong>horarios que chocan</strong> y dice por qué</li>
+      <li>Avisa si la persona <strong>ya tiene turno</strong> ese día</li>
+    </ul>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>6</span></div>
+</section>
+
+<!-- 7 · Reglas -->
+<section class="diapo oscura">
+  <div class="etiqueta">Reglas automáticas</div>
+  <h2>Lo que el sistema nunca deja pasar</h2>
+  <div class="cuerpo dos" style="gap:18px 48px">
+    <ul class="lista">
+      <li><strong>Un turno por jornada</strong> por persona y día</li>
+      <li><strong>Doble jornada</strong> solo como turno extra y sin choque de horas</li>
+      <li><strong>Entrega de la unidad</strong>: el diurno termina antes de que empiece el nocturno</li>
+      <li><strong>Cupo</strong> de la unidad, salvo «Cupo extra»</li>
+    </ul>
+    <ul class="lista">
+      <li>Solo personal, unidades y áreas <strong>activos</strong></li>
+      <li><strong>Gerencia y administración</strong> no reciben turnos</li>
+      <li>Turnos pasados <strong>cerrados</strong>: no se editan</li>
+      <li>Dos admins a la vez: <strong>sin exceder cupos</strong></li>
+    </ul>
+  </div>
+  <div class="pie"><span>Se aplican igual en el formulario y en la carga masiva</span><span>7</span></div>
+</section>
+
+<!-- 8 · Calendario -->
+<section class="diapo">
+  <div class="etiqueta">Módulo 2 · Consulta</div>
+  <h2>Calendario, tabla y filtros</h2>
+  <div class="cuerpo dos" style="grid-template-columns: 1fr 1.2fr; align-items:center">
+    <ul class="lista">
+      <li><strong>Vista Calendario</strong> por mes, con un color por jornada</li>
+      <li><strong>Vista Tabla</strong> con editar y eliminar</li>
+      <li><strong>Filtros avanzados</strong>: fechas, persona, unidad, área, jornada, horario, extra</li>
+      <li>Turnos pasados marcados como <span class="etq neu">Cerrado</span></li>
+    </ul>
+    <div class="ventana">
+      <div class="top"><i></i><i></i><i></i>&nbsp;Noviembre 2026</div>
+      <div class="area" style="padding:14px">
+        <div class="cal">
+          <div>16<b class="d">A-111 · 3</b><b class="n">A-112 · 3</b></div>
+          <div>17<b class="d">A-111 · 3</b><b class="n">A-112 · 2</b></div>
+          <div>18<b class="d">A-113 · 3</b><b class="x">Extra · 1</b></div>
+          <div>19<b class="d">A-111 · 3</b></div>
+          <div>20<b class="d">A-111 · 3</b><b class="n">A-112 · 3</b></div>
+          <div>21<b class="n">A-114 · 3</b></div>
+          <div>22</div>
+          <div>23<b class="d">A-111 · 3</b></div>
+          <div>24<b class="d">A-112 · 3</b><b class="n">A-113 · 3</b></div>
+          <div>25<b class="d">A-111 · 2</b></div>
+          <div>26<b class="n">A-114 · 3</b></div>
+          <div>27<b class="d">A-113 · 3</b></div>
+          <div>28</div>
+          <div>29<b class="x">Extra · 2</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>8</span></div>
+</section>
+
+<!-- 9 · Carga masiva -->
+<section class="diapo">
+  <div class="etiqueta">Módulo 2 · Carga masiva</div>
+  <h2>Un mes de programación en un solo archivo</h2>
+  <div class="cuerpo tres">
+    <div class="tarjeta"><div class="n">1</div><h3>Descargar plantilla</h3><p>Trae una hoja con los trabajadores, unidades y áreas disponibles hoy.</p></div>
+    <div class="tarjeta"><div class="n">2</div><h3>Llenar y subir</h3><p>Una fila por turno. Se elige si omitir o sobrescribir los duplicados.</p></div>
+    <div class="tarjeta"><div class="n">3</div><h3>Revisar el resultado</h3><p>Cuántos se crearon, actualizaron u omitieron, y el motivo de cada fila rechazada.</p></div>
+  </div>
+  <p class="lead" style="margin-top:28px">Las filas válidas se guardan aunque otras tengan errores, y todo se valida con las mismas reglas del formulario.</p>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>9</span></div>
+</section>
+
+<!-- 10 · Catálogos -->
+<section class="diapo">
+  <div class="etiqueta">Módulos 3, 4 y 5 · Catálogos</div>
+  <h2>Personal, áreas y unidades siempre al día</h2>
+  <div class="cuerpo dos" style="align-items:start">
+    <div>
+      <ul class="lista">
+        <li><strong>Nada se borra</strong>: eliminar desactiva y conserva el historial</li>
+        <li><strong>Reactivar</strong> con un clic</li>
+        <li>Vacaciones e incapacidad sacan a la persona de la lista al asignar</li>
+        <li>Unidades en taller o inspección no se pueden asignar</li>
+      </ul>
+    </div>
+    <div class="tarjeta">
+      <h3>Estados</h3>
+      <p style="line-height:2.2">
+        <span class="etq ok">Personal (Activo)</span> <span class="etq info">Vacaciones</span> <span class="etq err">Incapacidad</span> <span class="etq neu">Inactivo</span><br>
+        <span class="etq ok">Disponible</span> <span class="etq aviso">En Taller</span> <span class="etq aviso">En Inspección</span> <span class="etq err">Vendido</span> <span class="etq err">Dado de Baja</span><br>
+        <span class="etq ok">Área activa</span> <span class="etq neu">Área inactiva</span>
+      </p>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>10</span></div>
+</section>
+
+<!-- 11 · Reportes -->
+<section class="diapo">
+  <div class="etiqueta">Módulo 6 · Historial y reportes</div>
+  <h2>Reportes oficiales en PDF y Excel</h2>
+  <div class="cuerpo">
+    <div class="codigos">
+      <div class="codigo" style="background:#DCFCE7;color:#166534">12D<small>Diurno</small></div>
+      <div class="codigo" style="background:#DBEAFE;color:#1E40AF">12N<small>Nocturno</small></div>
+      <div class="codigo" style="background:#FEF3C7;color:#92400E">12D+<small>Turno extra</small></div>
+      <div class="codigo" style="background:#FEF3C7;color:#92400E">24H<small>Doble jornada</small></div>
+      <div class="codigo" style="background:#F8FAFC;color:#64748B;border:1px solid var(--borde)">D<small>Descanso</small></div>
+    </div>
+    <div class="tres" style="display:grid; gap:20px">
+      <div class="tarjeta"><h3>Programa de Turnos</h3><p>Matriz por unidad y día, con horas y extras. Es el reporte por defecto.</p></div>
+      <div class="tarjeta"><h3>Reporte Completo</h3><p>Matriz, detalle de extras y auditoría.</p></div>
+      <div class="tarjeta"><h3>Solo Auditoría</h3><p>Quién creó, editó o eliminó cada turno, y cuándo.</p></div>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>11</span></div>
+</section>
+
+<!-- 12 · Seguridad -->
+<section class="diapo">
+  <div class="etiqueta">Seguridad</div>
+  <h2>Protegido por diseño</h2>
+  <div class="cuerpo tres">
+    <div class="tarjeta"><h3>Acceso</h3><p>Solo cuentas registradas. Sin sesión, todo lleva al login; los permisos se revisan en el servidor.</p></div>
+    <div class="tarjeta"><h3>Sesiones</h3><p>1 hora para administradores y 30 días para trabajadores. Límite de intentos y de códigos.</p></div>
+    <div class="tarjeta"><h3>Datos</h3><p>Base con seguridad por filas, auditoría de cambios y errores registrados sin datos personales.</p></div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>12</span></div>
+</section>
+
+<!-- 13 · Próximos pasos -->
+<section class="diapo">
+  <div class="etiqueta">Lo que sigue</div>
+  <h2>Próximos pasos</h2>
+  <div class="cuerpo dos">
+    <div class="tarjeta"><h3>Para la puesta en marcha</h3>
+      <ul class="lista" style="gap:10px; margin-top:10px">
+        <li style="font-size:18px">Crear un segundo administrador</li>
+        <li style="font-size:18px">Crear las cuentas de los trabajadores</li>
+        <li style="font-size:18px">Activar alertas de errores en Sentry</li>
+        <li style="font-size:18px">Dos semanas de seguimiento en uso real</li>
+      </ul>
+    </div>
+    <div class="tarjeta"><h3>Mejoras a definir</h3>
+      <ul class="lista" style="gap:10px; margin-top:10px">
+        <li style="font-size:18px">Vista «mis turnos» por trabajador</li>
+        <li style="font-size:18px">Rotación 4x2 asistida</li>
+        <li style="font-size:18px">Flujo de reemplazos y feriados</li>
+      </ul>
+    </div>
+  </div>
+  <div class="pie"><span>Sistema de asignación de turnos</span><span>13</span></div>
+</section>
+
+<!-- 14 · Cierre -->
+<section class="diapo oscura">
+  <div class="circulo"></div>
+  <div style="margin:auto 0">
+    <div class="grande">Gracias</div>
+    <div class="barra" style="margin-top:22px"></div>
+    <p class="lead" style="margin-top:26px">fuentelectric-asistence-table.vercel.app</p>
+    <p class="lead" style="margin-top:8px; font-size:18px">Documentación: Documentación del sistema · Manual técnico · Guía del administrador · Guía del trabajador</p>
+  </div>
+  <div class="pie"><span>Fuentelectric</span><span>14</span></div>
+</section>
+
+</div>
+
+<div class="controles">
+  <button type="button" id="ant" aria-label="Diapositiva anterior">←</button>
+  <span id="contador">1 / 14</span>
+  <button type="button" id="sig" aria-label="Diapositiva siguiente">→</button>
+  <button type="button" id="completa">Pantalla completa</button>
+</div>
+
+<script>
+  const diapos = [...document.querySelectorAll('.diapo')]
+  const contador = document.getElementById('contador')
+  let actual = 0
+  try { actual = Math.min(diapos.length - 1, Math.max(0, Number(location.hash.slice(1)) - 1 || 0)) } catch {}
+
+  function ajustar() {
+    const escala = Math.min(innerWidth / 1280, (innerHeight - 56) / 720) * 0.96
+    diapos.forEach(d => { d.style.transform = `scale(${escala})` })
+  }
+  function mostrar(i) {
+    actual = Math.min(diapos.length - 1, Math.max(0, i))
+    diapos.forEach((d, n) => d.classList.toggle('activa', n === actual))
+    contador.textContent = `${actual + 1} / ${diapos.length}`
+    history.replaceState(null, '', `#${actual + 1}`)
+  }
+  document.getElementById('ant').onclick = () => mostrar(actual - 1)
+  document.getElementById('sig').onclick = () => mostrar(actual + 1)
+  document.getElementById('completa').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()
+  document.getElementById('escenario').onclick = () => mostrar(actual + 1)
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); mostrar(actual + 1) }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); mostrar(actual - 1) }
+    if (e.key === 'Home') mostrar(0)
+    if (e.key === 'End') mostrar(diapos.length - 1)
+    if (e.key === 'f' || e.key === 'F') document.getElementById('completa').click()
+  })
+  addEventListener('hashchange', () => mostrar(Number(location.hash.slice(1)) - 1 || 0))
+  addEventListener('resize', ajustar)
+  ajustar(); mostrar(actual)
+</script>
+</body>
+</html>

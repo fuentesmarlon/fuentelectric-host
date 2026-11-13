@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual técnico · Fuentelectric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="hoja">
+
+<header class="portada">
+  <div class="logo"><img src="img/fte-logo.png" alt="FTE · Fuentelectric"></div>
+  <div class="tipo-doc">Manual técnico</div>
+  <h1>Sistema de asignación de turnos</h1>
+  <p class="resumen">Arquitectura, base de datos, entornos, despliegue, cuentas, monitoreo y las tareas de mantenimiento más comunes, explicadas paso a paso para quien continúe con el sistema.</p>
+  <div class="barra"></div>
+</header>
+
+<main class="contenido">
+
+<table class="ficha">
+  <tr><th>Código del documento</th><td>FTE-TUR-MT-02</td></tr>
+  <tr><th>Versión</th><td>1.2</td></tr>
+  <tr><th>Fecha</th><td>10 de noviembre de 2026</td></tr>
+  <tr><th>Elaboró</th><td>Pablo García · Desarrollador</td></tr>
+  <tr><th>Revisó / aprobó</th><td>Marlon Fuentes · Gestor de proyecto</td></tr>
+  <tr><th>Estado</th><td>Versión de entrega</td></tr>
+  <tr><th>Clasificación</th><td>Uso interno · Personal técnico</td></tr>
+</table>
+
+<h3>Historial de revisiones</h3>
+<table>
+  <thead><tr><th style="width:12%">Versión</th><th style="width:22%">Fecha</th><th>Cambios</th><th style="width:20%">Autor</th></tr></thead>
+  <tbody><tr><td>1.0</td><td>06/11/2026</td><td>Primera versión, para la salida a producción.</td><td>Pablo García</td></tr>
+    <tr><td>1.1</td><td>10/11/2026</td><td>Rol Superadministrador, sección Cuentas de acceso, sesión de administrador de 1 hora y entrada con contraseña o código.</td><td>Pablo García</td></tr>
+    <tr><td>1.2</td><td>10/11/2026</td><td>Cambio de contraseña obligatorio en el primer inicio de sesión y restablecimiento de contraseña desde Cuentas de acceso.</td><td>Pablo García</td></tr></tbody>
+</table>
+
+<nav class="indice">
+  <strong>Contenido</strong>
+  <ol>
+    <li><a href="#intro">Introducción</a></li>
+    <li><a href="#arquitectura">Arquitectura</a></li>
+    <li><a href="#tecnologias">Tecnologías</a></li>
+    <li><a href="#estructura">Estructura del código</a></li>
+    <li><a href="#bd">Base de datos</a></li>
+    <li><a href="#entornos">Entornos y variables</a></li>
+    <li><a href="#local">Instalación local</a></li>
+    <li><a href="#despliegue">Flujo de cambios y despliegue</a></li>
+    <li><a href="#migraciones">Migraciones</a></li>
+    <li><a href="#cuentas">Cuentas y acceso</a></li>
+    <li><a href="#monitoreo">Monitoreo y registros</a></li>
+    <li><a href="#respaldos">Respaldos y recuperación</a></li>
+    <li><a href="#calidad">Pruebas y calidad</a></li>
+    <li><a href="#tareas">Tareas de mantenimiento</a></li>
+    <li><a href="#problemas">Solución de problemas</a></li>
+    <li><a href="#seguridad">Buenas prácticas de seguridad</a></li>
+  </ol>
+</nav>
+
+<h2 id="intro"><span class="num">1.</span> Introducción</h2>
+<p>Este manual es para la persona que mantenga el sistema: corregir errores, hacer cambios, publicar nuevas versiones o atender un problema en producción. Se asume que conoce lo básico de JavaScript, Git y bases de datos. Para saber <em>qué</em> hace el sistema y sus reglas de negocio, lea primero la <em>Documentación del sistema</em> (FTE-TUR-DOC-01).</p>
+<div class="importante"><p>El código del proyecto también está comentado pensando en el mantenimiento. Cuando este manual mencione un archivo, abrirlo y leer su comentario inicial suele ser el mejor siguiente paso.</p></div>
+<h3>Recursos</h3>
+<table>
+  <thead><tr><th style="width:28%">Recurso</th><th>Dónde</th></tr></thead>
+  <tbody>
+    <tr><td>Aplicación en producción</td><td><code>https://fuentelectric-asistence-table.vercel.app</code></td></tr>
+    <tr><td>Repositorio</td><td>GitHub: <code>PabloGarcia2810/fuentelectric_asistence_table</code> (privado). Rama principal: <code>main</code>.</td></tr>
+    <tr><td>Hosting</td><td>Vercel (proyecto conectado al repositorio).</td></tr>
+    <tr><td>Base de datos y cuentas</td><td>Supabase (PostgreSQL + Authentication).</td></tr>
+    <tr><td>Correos de acceso</td><td>Resend.</td></tr>
+    <tr><td>Errores</td><td>Sentry, organización <code>fuentelectric</code>.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="arquitectura" class="salto"><span class="num">2.</span> Arquitectura</h2>
+<p>Es una aplicación web <strong>Next.js</strong> desplegada en Vercel. No hay un backend separado: las páginas se generan en el servidor y los cambios (guardar, eliminar) se hacen con <em>Server Actions</em> que corren en el mismo servidor. Toda la información vive en PostgreSQL (Supabase) y se accede con Prisma.</p>
+<div class="diagrama">
+  <div class="caja">Navegador<small>admin o trabajador</small></div><span class="flecha">→</span>
+  <div class="caja oscura">Vercel · Next.js<small>proxy → páginas, acciones y /api</small></div><span class="flecha">→</span>
+  <div class="caja">Supabase<small>PostgreSQL · Auth</small></div>
+</div>
+<div class="diagrama">
+  <div class="caja oscura">Next.js</div><span class="flecha">→</span>
+  <div class="caja">Resend<small>envía el código de acceso</small></div>
+  <div class="caja">Sentry<small>recibe los errores</small></div>
+  <div class="caja">GitHub Actions<small>revisa cada cambio (CI)</small></div>
+</div>
+<h3>Recorrido de una petición</h3>
+<ol class="pasos">
+  <li><strong>Proxy</strong> (<code>src/proxy.ts</code> → <code>src/utils/supabase/middleware.ts</code>): renueva la sesión de Supabase y, si no hay sesión, manda al login.</li>
+  <li><strong>Página</strong> (<code>src/app/tableros/&lt;sección&gt;/page.tsx</code>): comprueba rol y vigencia de la sesión (<code>lib/sesion.ts</code>), consulta la base y entrega los datos al componente de pantalla.</li>
+  <li><strong>Componente de pantalla</strong> (<code>*Client.tsx</code>): formularios, filtros y diálogos en el navegador.</li>
+  <li><strong>Acción</strong> (<code>actions.ts</code>): al guardar, vuelve a comprobar que sea admin (<code>lib/auth.ts</code>), valida con las reglas de <code>lib/reglas-turno.ts</code> y escribe en la base dentro de una transacción. Devuelve <code>null</code> si todo salió bien o el texto del error.</li>
+</ol>
+
+<h2 id="tecnologias"><span class="num">3.</span> Tecnologías</h2>
+<table>
+  <thead><tr><th style="width:28%">Pieza</th><th style="width:22%">Versión</th><th>Para qué se usa</th></tr></thead>
+  <tbody>
+    <tr><td>Next.js (App Router)</td><td>16.2</td><td>Páginas, acciones del servidor y rutas /api. En esta versión el “middleware” se llama <code>proxy</code>.</td></tr>
+    <tr><td>React</td><td>19.2</td><td>Interfaz.</td></tr>
+    <tr><td>TypeScript</td><td>5</td><td>Todo el código de <code>src/</code>.</td></tr>
+    <tr><td>Prisma + adaptador pg</td><td>7.8</td><td>Acceso a la base y migraciones.</td></tr>
+    <tr><td>Supabase</td><td>—</td><td>PostgreSQL y autenticación (contraseña y código por correo).</td></tr>
+    <tr><td>Tailwind CSS + shadcn/ui (Radix)</td><td>4</td><td>Estilos y componentes (diálogos, menús, selects).</td></tr>
+    <tr><td>ExcelJS · jsPDF</td><td>4.4 · 4.2</td><td>Plantilla y carga masiva de Excel; reportes en Excel y PDF.</td></tr>
+    <tr><td>Resend</td><td>6</td><td>Envío del código de acceso por correo.</td></tr>
+    <tr><td>Sentry</td><td>10</td><td>Registro de errores en navegador y servidor.</td></tr>
+    <tr><td>Node.js · pnpm</td><td>24 · 12</td><td>Entorno de ejecución y gestor de paquetes.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="estructura" class="salto"><span class="num">4.</span> Estructura del código</h2>
+<pre><code>src/
+├── proxy.ts                    Se ejecuta antes de cada página (sesión y redirecciones)
+├── app/
+│   ├── page.tsx                Portada pública
+│   ├── login/                  Inicio de sesión (contraseña / código por correo)
+│   ├── not-found.tsx           Página 404
+│   ├── tableros/               Panel (requiere sesión)
+│   │   ├── page.tsx            Dashboard
+│   │   ├── asistencias/        Asignación de turnos, calendario, carga masiva
+│   │   ├── usuarios/           Trabajadores
+│   │   ├── areas/  vehiculos/  Catálogos
+│   │   └── historial/          Auditoría y reportes
+│   └── api/
+│       ├── asistencias/        Plantilla de Excel y carga masiva
+│       └── historial/          Descarga de reportes PDF y Excel
+├── lib/
+│   ├── reglas-turno.ts         Reglas de negocio de los turnos (un solo lugar)
+│   ├── puestos-no-asignables.ts  Puestos que nunca reciben turnos
+│   ├── horarios-turno.ts       Horarios, etiquetas y compatibilidad
+│   ├── estados-vehiculo.ts     Estados de vehículo y sus colores
+│   ├── sesion.ts · auth.ts     Sesión y permisos
+│   ├── form-validation.ts      Lectura de formularios y fechas (hora de Guatemala)
+│   ├── carga-masiva.ts         Lectura y validación del Excel
+│   ├── reportes-exportacion.ts Datos de los reportes
+│   └── reportes/{pdf,excel}/   Dibujo de cada sección del reporte
+└── components/                 Componentes compartidos y del panel
+prisma/
+├── schema.prisma               Estructura de la base (comentada)
+├── migrations/                 Historial de cambios de la base
+└── seed.mjs                    Datos de prueba (solo staging/desarrollo)
+scripts/preparar-entrega.mjs    Respaldo/limpieza usados en la entrega
+tests/                          Pruebas automáticas (sin base de datos)
+docs/manuales/                  Esta documentación</code></pre>
+<div class="consejo"><p>Cada sección del panel sigue el mismo patrón: <code>page.tsx</code> (datos, en el servidor) · <code>*Client.tsx</code> (pantalla) · <code>actions.ts</code> (cambios). Si sabe dónde está una, sabe dónde están todas.</p></div>
+
+<h2 id="bd" class="salto"><span class="num">5.</span> Base de datos</h2>
+<table>
+  <thead><tr><th style="width:22%">Tabla</th><th>Contenido y notas</th></tr></thead>
+  <tbody>
+    <tr><td><code>Usuario</code></td><td>Cuentas que pueden entrar. El <code>id</code> es el mismo de Supabase Auth. <code>rol</code>: <code>SUPERADMIN</code>, <code>ADMIN</code> o <code>TRABAJADOR</code>. <code>debeCambiarContrasena</code>: si está en <code>true</code>, debe elegir una contraseña nueva al entrar.</td></tr>
+    <tr><td><code>Trabajador</code></td><td>Personal que recibe turnos: nombre, puesto (texto libre), estado, horario establecido y unidad fija opcional.</td></tr>
+    <tr><td><code>Area</code></td><td>Zonas operativas. Nombre único y estado.</td></tr>
+    <tr><td><code>Vehiculo</code></td><td>Unidades: código único, tipo (<code>CARRO</code>/<code>CAMION</code>), capacidad (<code>noPersonas</code>) y estado.</td></tr>
+    <tr><td><code>TurnoDiario</code></td><td>Un turno. Guarda la relación con trabajador, área y vehículo y además una copia de sus nombres. Único por trabajador + fecha + jornada.</td></tr>
+    <tr><td><code>SnapshotTurno</code></td><td>Auditoría en texto, sin relaciones: sobrevive aunque el turno se borre.</td></tr>
+  </tbody>
+</table>
+<div class="importante"><p><strong>Fechas de turno:</strong> la columna <code>fecha</code> se guarda a las <strong>12:00 UTC</strong> del día (06:00 en Guatemala), así el día nunca cambia al convertir zonas horarias. Para buscar turnos de un día use <code>rangoFechaTurno()</code> de <code>lib/form-validation.ts</code>; no arme las fechas a mano.</p></div>
+<p><strong>Conexiones:</strong> la aplicación usa <code>DATABASE_URL</code> con el <em>pooler</em> de Supabase en modo <em>transaction</em> (puerto 6543) y un máximo de 5 conexiones por instancia (<code>DATABASE_POOL_MAX</code>). Las migraciones usan <code>DIRECT_URL</code> en modo <em>session</em> (puerto 5432).</p>
+<p><strong>Seguridad por filas (RLS):</strong> está activada en todas las tablas sin políticas, de modo que la API pública de Supabase no puede leer nada. La aplicación usa el rol <code>postgres</code>, que no se ve afectado.</p>
+
+<h2 id="entornos"><span class="num">6.</span> Entornos y variables</h2>
+<p>Las variables se configuran en Vercel (<em>Settings → Environment Variables</em>) y, para trabajar en local, en un archivo <code>.env</code> (plantilla: <code>.env.example</code>). <strong>Nunca</strong> se suben al repositorio.</p>
+<table>
+  <thead><tr><th style="width:36%">Variable</th><th>Para qué sirve</th></tr></thead>
+  <tbody>
+    <tr><td><code>NEXT_PUBLIC_ENTORNO</code></td><td><code>produccion</code>, <code>staging</code> o <code>desarrollo</code>. Fuera de producción muestra una etiqueta en pantalla y separa los errores en Sentry.</td></tr>
+    <tr><td><code>DATABASE_URL</code></td><td>Conexión de la app (pooler, puerto 6543).</td></tr>
+    <tr><td><code>DIRECT_URL</code></td><td>Conexión para migraciones (puerto 5432).</td></tr>
+    <tr><td><code>NEXT_PUBLIC_SUPABASE_URL</code> · <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></td><td>Proyecto de Supabase (públicas).</td></tr>
+    <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Clave secreta que genera los códigos de acceso. Solo en el servidor.</td></tr>
+    <tr><td><code>RESEND_API_KEY</code></td><td>Envío de correos con el código.</td></tr>
+    <tr><td><code>SENTRY_AUTH_TOKEN</code></td><td>Opcional: sube los <em>source maps</em> a Sentry al compilar.</td></tr>
+    <tr><td><code>DATABASE_POOL_MAX</code></td><td>Opcional: conexiones por instancia (5 por defecto).</td></tr>
+  </tbody>
+</table>
+<div class="peligro"><p>Hoy el <code>.env</code> local del equipo de desarrollo apunta a la base de <strong>producción</strong>. Cualquier comando de base de datos que se ejecute en local (<code>pnpm db:migrate</code>, <code>pnpm entrega …</code>, Prisma Studio) cambia datos reales. Lo recomendado es crear un proyecto de Supabase de staging y usar ese en el <code>.env</code>.</p></div>
+
+<h2 id="local" class="salto"><span class="num">7.</span> Instalación local</h2>
+<ol class="pasos">
+  <li>Instale Node.js 24 y pnpm 12, y clone el repositorio.</li>
+  <li>Instale las dependencias (también genera el cliente de Prisma):<pre><code>pnpm install</code></pre></li>
+  <li>Copie <code>.env.example</code> a <code>.env</code> y complete los valores (de preferencia, de un proyecto de staging).</li>
+  <li>Si la base está vacía, cree las tablas y, solo en staging, cargue datos de prueba:<pre><code>pnpm db:migrate
+pnpm db:seed</code></pre></li>
+  <li>Inicie el servidor de desarrollo y abra <code>http://localhost:3000</code>:<pre><code>pnpm dev</code></pre></li>
+</ol>
+
+<h2 id="despliegue"><span class="num">8.</span> Flujo de cambios y despliegue</h2>
+<p>Vercel publica automáticamente lo que llega a <code>main</code>. Por eso todo cambio pasa por una rama y un <em>pull request</em>:</p>
+<ol class="pasos">
+  <li>Cámbiese a <code>main</code> y actualícela (<em>Fetch</em> y <em>Pull</em> en GitHub Desktop).</li>
+  <li>Cree una rama nueva <strong>desde main</strong> con un nombre descriptivo: <code>fix/…</code> para correcciones, <code>feat/…</code> para funciones nuevas, <code>docs/…</code> para documentación.</li>
+  <li>Haga el cambio y verifique en local: <code>pnpm lint</code>, <code>pnpm typecheck</code>, <code>pnpm test</code> y <code>pnpm build</code>.</li>
+  <li>Publique la rama y abra el <em>pull request</em> hacia <code>main</code>. GitHub Actions corre las mismas comprobaciones.</li>
+  <li>Si el cambio necesita una migración, aplíquela <strong>antes</strong> de unir (sección 9).</li>
+  <li>Una vez unido el PR, Vercel publica en uno o dos minutos. Revise la página en producción.</li>
+</ol>
+<div class="importante"><p>No use la rama <code>dev</code>: quedó atrasada respecto a <code>main</code> y los cambios hechos ahí generan conflictos. Si un PR muestra conflictos, lo más seguro es rehacer el cambio en una rama nueva desde <code>main</code>.</p></div>
+<p><strong>Volver a una versión anterior:</strong> en Vercel, <em>Deployments</em> → elija la última versión que funcionaba → <em>Promote to Production</em> (o <em>Instant Rollback</em>). Esto revierte el código, no la base de datos.</p>
+
+<h2 id="migraciones" class="salto"><span class="num">9.</span> Migraciones de base de datos</h2>
+<p>Cada cambio de estructura de la base es una migración en <code>prisma/migrations/</code>. La última es <code>20261110120000_rol_superadmin</code>. Revise con <code>pnpm db:status</code> cuáles faltan en producción.</p>
+<ol class="pasos">
+  <li>Modifique <code>prisma/schema.prisma</code>.</li>
+  <li>Genere la migración contra una base de pruebas (nunca contra producción):<pre><code>pnpm prisma migrate dev --create-only --name descripcion_corta</code></pre></li>
+  <li>Revise el archivo <code>migration.sql</code> generado. Si quita valores o columnas, primero debe mover los datos existentes (vea <code>20261106180000_simplificar_estados</code> como ejemplo).</li>
+  <li>Revise qué falta aplicar en producción y aplíquelo <strong>antes</strong> de publicar el código que lo usa:<pre><code>pnpm db:status
+pnpm db:migrate</code></pre></li>
+  <li>Una a <code>main</code> el PR con el código.</li>
+</ol>
+<div class="nota"><p>¿Por qué antes? El código anterior suele funcionar con la base ya migrada, pero el código nuevo puede fallar si la base todavía no tiene el cambio.</p></div>
+
+<h2 id="cuentas"><span class="num">10.</span> Cuentas y acceso</h2>
+<p>Una cuenta vive en <strong>dos lugares</strong>: el usuario en Supabase Auth (correo, contraseña y sesión) y su fila en la tabla <code>Usuario</code> (nombre y rol) con el mismo id. Las acciones de <code>src/app/tableros/cuentas/actions.ts</code> cambian los dos a la vez y, si el segundo paso falla, deshacen el primero.</p>
+<table>
+  <thead><tr><th style="width:22%">Rol</th><th>Permisos y forma de entrar</th></tr></thead>
+  <tbody>
+    <tr><td><code>SUPERADMIN</code></td><td>Todo lo de <code>ADMIN</code> y además la sección <strong>Cuentas de acceso</strong>. Contraseña o código; sesión de 1 hora.</td></tr>
+    <tr><td><code>ADMIN</code></td><td>Turnos, catálogos e historial. Contraseña o código; sesión de 1 hora.</td></tr>
+    <tr><td><code>TRABAJADOR</code></td><td>Solo el Dashboard. Solo código; sesión de 30 días.</td></tr>
+  </tbody>
+</table>
+<p>Las reglas de permisos están en <code>src/lib/roles.ts</code> (<code>esAdministrador</code>, <code>esSuperadmin</code>). No compare el texto del rol a mano en el resto del código.</p>
+<h3>Crear, editar o eliminar una cuenta</h3>
+<p>Se hace desde el panel, con una cuenta de superadministrador: <em>Cuentas de acceso</em>. Ya no hace falta entrar a Supabase. El sistema aplica estas protecciones:</p>
+<ul>
+  <li>Nadie puede eliminarse ni cambiarse el rol a sí mismo.</li>
+  <li>Siempre debe quedar al menos un superadministrador.</li>
+  <li>Las cuentas de administrador necesitan contraseña (mínimo 8 caracteres); además pueden entrar con código.</li>
+  <li>Si un correo ya existía en Supabase Auth sin fila en <code>Usuario</code> (una cuenta a medias), al crearla se reutiliza.</li>
+</ul>
+<h3>Cambio de contraseña obligatorio</h3>
+<p>La columna <code>Usuario.debeCambiarContrasena</code> la activa el superadministrador con la casilla <em>Pedir cambio de contraseña al iniciar sesión</em> (al crear la cuenta o al editarla). Mientras esté en <code>true</code>:</p>
+<ul>
+  <li>Al iniciar sesión (con contraseña o con código) la persona va a <code>/cambiar-contrasena</code> en lugar de <code>/tableros</code>.</li>
+  <li><code>requerirSesion</code> (<code>src/lib/sesion.ts</code>) la regresa ahí desde cualquier página del panel, y <code>verificarAdmin</code> / <code>verificarAdminApi</code> (<code>src/lib/auth.ts</code>) rechazan sus acciones y descargas.</li>
+  <li>La contraseña nueva se guarda con la sesión de la propia persona (<code>supabase.auth.updateUser</code>), así Supabase aplica sus reglas y la sesión sigue abierta. Después la columna vuelve a <code>false</code>.</li>
+</ul>
+<p>Solo aplica a administradores y superadministradores; en una cuenta de trabajador la casilla no aparece y el valor se guarda en <code>false</code>.</p>
+<h3>Si no queda ningún superadministrador</h3>
+<p>Solo pasaría si alguien cambia la base a mano. Se recupera desde Supabase → <em>SQL Editor</em>:</p>
+<pre><code>update "Usuario" set rol = 'SUPERADMIN' where email = 'correo@fuentelectric.com';</code></pre>
+<h3>Otras operaciones</h3>
+<ul>
+  <li><strong>Restablecer la contraseña de un admin:</strong> en <em>Cuentas de acceso</em> → editar → marcar <em>Pedir cambio de contraseña al iniciar sesión</em>. La persona entra con código por correo y elige la nueva. Si se prefiere, también se le puede escribir una contraseña temporal en <em>Nueva contraseña</em>.</li>
+  <li><strong>Quitar un cambio pendiente sin que lo haga:</strong> editar la cuenta y desmarcar la casilla, o en el <em>SQL Editor</em>: <code>update "Usuario" set "debeCambiarContrasena" = false where email = 'correo@fuentelectric.com';</code></li>
+  <li><strong>Quitar el acceso:</strong> eliminar la cuenta en <em>Cuentas de acceso</em>. Se borra de Supabase Auth y de <code>Usuario</code>, y se cierran sus sesiones. Los turnos y la auditoría no se ven afectados.</li>
+</ul>
+<h3>Valores de seguridad que se pueden ajustar</h3>
+<table>
+  <thead><tr><th style="width:42%">Valor</th><th>Dónde</th></tr></thead>
+  <tbody>
+    <tr><td>Duración de la sesión (1 hora administradores / 30 días trabajador)</td><td><code>src/lib/auth.ts</code></td></tr>
+    <tr><td>Intentos de inicio de sesión y códigos por correo</td><td>Constantes al inicio de <code>src/app/login/actions.ts</code></td></tr>
+    <tr><td>Diseño y texto del correo con el código</td><td><code>enviarCorreoOtp</code> en <code>src/app/login/actions.ts</code></td></tr>
+  </tbody>
+</table>
+<div class="nota"><p>El límite de intentos se guarda en la memoria de cada instancia del servidor. Frena el abuso casual, pero no es un límite global; si se necesitara, habría que usar un almacén compartido (por ejemplo, una tabla o Redis).</p></div>
+
+<h2 id="monitoreo" class="salto"><span class="num">11.</span> Monitoreo y registros</h2>
+<ul>
+  <li><strong>Sentry</strong> recibe los errores del navegador, del servidor y del proxy, separados por entorno. Configuración: <code>src/instrumentation-client.ts</code>, <code>sentry.server.config.ts</code> y <code>sentry.edge.config.ts</code>. Recomendado: crear una alerta por correo para errores nuevos en <em>Alerts → Create Alert</em>.</li>
+  <li><strong>Vercel → Logs</strong> muestra los mensajes del servidor (por ejemplo, si falló el envío de un correo).</li>
+  <li><strong>Supabase → Reports</strong> muestra el uso de la base y las conexiones.</li>
+  <li><strong>Resend → Emails</strong> muestra si cada correo de código se entregó o rebotó.</li>
+</ul>
+
+<h2 id="respaldos"><span class="num">12.</span> Respaldos y recuperación</h2>
+<ul>
+  <li>Revise en Supabase (<em>Database → Backups</em>) qué respaldos automáticos incluye el plan contratado y por cuántos días se guardan.</li>
+  <li>Para un respaldo propio de toda la base, use <code>pg_dump</code> con la conexión de <code>DIRECT_URL</code> y guarde el archivo en un lugar seguro de la empresa:<pre><code>pg_dump "$DIRECT_URL" --no-owner --format=custom --file=respaldo-AAAA-MM-DD.dump</code></pre></li>
+  <li>Los reportes de <em>Historial</em> (Reporte Completo en Excel) sirven como respaldo legible de la programación de un periodo.</li>
+  <li><code>pnpm entrega respaldar</code> copia los catálogos (áreas, vehículos, trabajadores y usuarios) a la carpeta <code>respaldos/</code>, que no se sube a Git porque contiene datos personales.</li>
+</ul>
+<div class="peligro"><p><strong>No ejecute <code>pnpm entrega limpiar</code>.</strong> Borra todas las asistencias y el historial; solo se usó para dejar la base limpia antes de la entrega.</p></div>
+
+<h2 id="calidad"><span class="num">13.</span> Pruebas y calidad</h2>
+<table>
+  <thead><tr><th style="width:26%">Comando</th><th>Qué comprueba</th></tr></thead>
+  <tbody>
+    <tr><td><code>pnpm lint</code></td><td>Reglas de estilo y errores comunes (ESLint).</td></tr>
+    <tr><td><code>pnpm typecheck</code></td><td>Tipos de TypeScript, incluida la coincidencia entre los estados del código y los de la base.</td></tr>
+    <tr><td><code>pnpm test</code></td><td>23 pruebas automáticas: reglas de turno, permisos, carga masiva, reportes, fechas y sesión. No usan la base real.</td></tr>
+    <tr><td><code>pnpm build</code></td><td>Que la aplicación compile como en producción.</td></tr>
+  </tbody>
+</table>
+<p>GitHub Actions (<code>.github/workflows/ci.yml</code>) corre los cuatro en cada <em>push</em> a <code>main</code> y en cada <em>pull request</em>. No una un PR con el CI en rojo.</p>
+
+<h2 id="tareas" class="salto"><span class="num">14.</span> Tareas de mantenimiento</h2>
+<table>
+  <thead><tr><th style="width:32%">Necesito…</th><th>Qué hacer</th></tr></thead>
+  <tbody>
+    <tr><td>Que otro puesto no reciba turnos</td><td>Agréguelo a la lista de <code>src/lib/puestos-no-asignables.ts</code>. No necesita migración.</td></tr>
+    <tr><td>Un horario nuevo (ej. 05:00–17:00)</td><td>Agregue el valor a <code>enum HorarioBase</code> en el esquema y cree la migración; luego agréguelo en <code>src/lib/horarios-turno.ts</code> (etiqueta y rango) y en el mapa de <code>src/lib/carga-masiva.ts</code>.</td></tr>
+    <tr><td>Agregar o quitar un estado de vehículo</td><td>Cámbielo en <code>enum EstadoVehiculo</code> (con migración) y en <code>src/lib/estados-vehiculo.ts</code>. TypeScript avisa si no coinciden.</td></tr>
+    <tr><td>Cambiar una regla de turno</td><td>Solo en <code>src/lib/reglas-turno.ts</code>: la usan el formulario, la edición y la carga masiva. Agregue o ajuste su prueba en <code>tests/</code>.</td></tr>
+    <tr><td>Cambiar textos de una pantalla</td><td>En el <code>*Client.tsx</code> de la sección.</td></tr>
+    <tr><td>Cambiar colores del panel</td><td>Variables al inicio de <code>src/app/tableros/dashboard.css</code>.</td></tr>
+    <tr><td>Cambiar el diseño de un reporte</td><td>Datos: <code>src/lib/reportes-exportacion.ts</code>. Dibujo: <code>src/lib/reportes/pdf/</code> o <code>src/lib/reportes/excel/</code>.</td></tr>
+    <tr><td>Actualizar dependencias</td><td>En una rama: <code>pnpm update</code>, luego las cuatro comprobaciones y una prueba manual. Lea las notas de versión de Next.js antes de un cambio mayor.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="problemas" class="salto"><span class="num">15.</span> Solución de problemas</h2>
+<table>
+  <thead><tr><th style="width:30%">Síntoma</th><th style="width:30%">Causa probable</th><th>Solución</th></tr></thead>
+  <tbody>
+    <tr><td>Un trabajador no recibe el código</td><td>Correo mal escrito, en spam, o falla de Resend.</td><td>Revise la carpeta de spam y Resend → <em>Emails</em>. Compruebe que el correo esté en <code>Usuario</code> en minúsculas y que exista en Supabase Auth.</td></tr>
+    <tr><td>“No se encontró ninguna cuenta asociada…”</td><td>Falta la fila en <code>Usuario</code>.</td><td>Créela (sección 10).</td></tr>
+    <tr><td>El admin vuelve al login seguido</td><td>La sesión de administrador dura 1 hora.</td><td>Es lo esperado. Se ajusta en <code>src/lib/auth.ts</code>.</td></tr>
+    <tr><td>Una persona no aparece al asignar turnos</td><td>No está <em>Activo</em>, o su puesto está en la lista de no asignables.</td><td>Revise su estado y cómo está escrito su puesto en Trabajadores.</td></tr>
+    <tr><td><code>typecheck</code> marca un error en <code>estados-vehiculo.ts</code> tras cambiar de rama</td><td>El cliente de Prisma quedó generado con otra versión del esquema.</td><td><code>pnpm prisma generate</code> y repetir.</td></tr>
+    <tr><td>Error en producción después de publicar</td><td>Falta aplicar una migración, o un error de código.</td><td><code>pnpm db:status</code>; si falta, <code>pnpm db:migrate</code>. Si no, revise Sentry y, si es urgente, vuelva a la versión anterior en Vercel.</td></tr>
+    <tr><td>“Too many connections” o lentitud</td><td>Demasiadas conexiones a la base.</td><td>Confirme que <code>DATABASE_URL</code> usa el puerto 6543 y revise <code>DATABASE_POOL_MAX</code>.</td></tr>
+    <tr><td>La carga masiva rechaza filas</td><td>Nombres que no coinciden o reglas de turno.</td><td>El resultado indica fila y motivo. Use la plantilla recién descargada y copie los nombres de su hoja de catálogos.</td></tr>
+    <tr><td>Conflictos al abrir un PR</td><td>La rama se creó desde una rama atrasada (como <code>dev</code>).</td><td>Rehaga el cambio en una rama nueva desde <code>main</code> actualizada.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="seguridad"><span class="num">16.</span> Buenas prácticas de seguridad</h2>
+<ul>
+  <li>Las claves (<code>SUPABASE_SERVICE_ROLE_KEY</code>, <code>RESEND_API_KEY</code>, conexiones) solo van en Vercel y en el <code>.env</code> local; nunca en el código, en capturas ni en chats.</li>
+  <li>Toda acción nueva que cambie datos debe empezar con <code>verificarAdmin()</code> (o <code>verificarSuperadmin()</code> si es de cuentas), y toda página de administración con <code>requerirAdminPagina()</code>.</li>
+  <li>Mantenga al menos <strong>dos administradores</strong> activos para no quedarse sin acceso.</li>
+  <li>Cuando alguien deje la empresa, quite su acceso el mismo día (sección 10).</li>
+  <li>La carpeta <code>respaldos/</code> tiene datos personales: no la comparta ni la suba a Git.</li>
+</ul>
+
+<div class="pie-doc"><span>FTE-TUR-MT-02 · Versión 1.2</span><span>Fuentelectric · Uso interno</span></div>
+</main>
+</div>
+</body>
+</html>

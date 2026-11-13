@@ -1,0 +1,8 @@
+allowBuilds:
+  '@prisma/engines': true
+  '@sentry/cli': true
+  core-js: true
+  msw: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true
